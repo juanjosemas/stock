@@ -99,7 +99,7 @@ window.exportarExcel = function() {
     document.body.removeChild(link);
 };
 
-// SALIDA A OBRA (Modificado para pedir cantidad)
+// SALIDA A OBRA
 window.salidaObra = function(index) {
     let item = inventario[index];
     let cantEnAlmacen = item.ubicaciones["Almacén"];
@@ -126,7 +126,7 @@ window.salidaObra = function(index) {
     }
 };
 
-// REGRESO RÁPIDO (Modificado para pedir cantidad)
+// REGRESO RÁPIDO
 window.regresoRapido = function(index, nombreObra) {
     let item = inventario[index];
     let cantEnObra = item.ubicaciones[nombreObra];

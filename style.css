@@ -238,57 +238,57 @@ input {
 
 .btn-mini-regreso {
   background: #3498db; /* Azul */
-  color: white; 
-  border: none; 
-  padding: 3px 6px; 
-  border-radius: 4px; 
-  font-size: 0.7rem; 
-  font-weight: bold; 
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  padding: 3px 6px; /* Relleno compacto */
+  border-radius: 4px; /* Bordes redondeados */
+  font-size: 0.7rem; /* Letra muy pequeña */
+  font-weight: bold; /* Texto resaltado */
 }
 
 .btn-enviar-peque {
   background: #e74c3c; /* Rojo */
-  color: white; 
-  border: none; 
-  padding: 4px 10px; 
-  border-radius: 15px; 
-  font-size: 0.80rem; 
-  font-weight: bold; 
-  vertical-align: middle; 
-  font-style: italic;
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  padding: 4px 10px; /* Relleno compacto */
+  border-radius: 15px; /* Forma de píldora */
+  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
+  font-weight: bold; /* Texto resaltado */
+  vertical-align: middle; /* Alineación vertical */
+  font-style: italic; /* Estilo cursiva según tu cambio */
 }
 
 .btn-borrar { 
-  background: #eee; 
-  color: #888; 
-  position: absolute; 
-  right: 8px; 
-  top: 8px; 
-  padding: 3px 6px; 
-  font-size: 0.80rem; 
-  border: none; 
-  border-radius: 5px;
-  font-family: Sriracha;
+  background: #eee; /* Gris muy claro */
+  color: #888; /* Texto gris suave */
+  position: absolute; /* Posición absoluta */
+  right: 8px; /* Distancia derecha */
+  top: 8px; /* Distancia superior */
+  padding: 3px 6px; /* Relleno compacto */
+  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  font-family: Sriracha; /* Fuente personalizada según tu cambio */
 }
 
 .btn-borrar-hist { 
-  width: 100%; 
-  background: #6c757d; 
-  color: white; 
-  padding: 10px; 
-  border-radius: 5px; 
-  margin-bottom: 15px; 
-  border: none;
+  width: 100%; /* Ancho total */
+  background: #6c757d; /* Gris para historial */
+  color: white; /* Texto blanco */
+  padding: 10px; /* Relleno interno */
+  border-radius: 5px; /* Bordes redondeados */
+  margin-bottom: 15px; /* Margen inferior */
+  border: none; /* Sin borde */
 }
 
 .hist-item { 
-  background: white; 
-  padding: 10px; 
-  border-bottom: 1px solid #eee; 
-  font-size: 0.85rem; 
+  background: white; /* Fondo blanco */
+  padding: 10px; /* Relleno interno */
+  border-bottom: 1px solid #eee; /* Separador inferior */
+  font-size: 0.85rem; /* Letra pequeña */
 }
 
 .hist-fecha {
-  color: #888; 
-  font-weight: bold; 
+  color: #888; /* Gris claro para fechas */
+  font-weight: bold; /* Texto resaltado */
 }

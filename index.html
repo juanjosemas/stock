@@ -27,14 +27,13 @@
         <a href="#" onclick="showScreen('salida')">↘ Salida a Obra</a>
         <a href="#" onclick="showScreen('regreso')">↖ Regreso de Obra</a>
         <a href="#" onclick="showScreen('historial')">📜 Historial Log</a>
-        <!-- Nuevo botón de exportación -->
         <a href="#" onclick="exportarExcel()" class="btn-exportar-menu">📥 Exportar Excel</a>
     </nav>
 
     <div id="overlay" onclick="toggleMenu()"></div>
 
     <main class="container">
-        <!-- Buscador Global (visible en listas) -->
+        <!-- Buscador Global -->
         <div id="busqueda-container" class="card hidden">
             <input type="text" id="buscador" placeholder="🔍 Buscar herramienta..." oninput="renderizar()">
         </div>
