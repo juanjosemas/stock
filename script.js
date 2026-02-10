@@ -1,4 +1,4 @@
-// CONFIGURACIÓN DE TU PROYECTO FIREBASE
+// CONFIGURACIÓN FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyD3BA__Bl9Ao1g4P9F6WUR93uEatnUKsNk",
     authDomain: "stock-almacen-b9af8.firebaseapp.com",
@@ -9,15 +9,65 @@ const firebaseConfig = {
     appId: "1:966227531987:web:6c4ee4e2795e12eaad9c26"
 };
 
-// Inicializamos Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Variables globales que se sincronizarán con la nube
 let inventario = [];
 let historial = [];
+let filtroCategoriaActual = 'Todas';
+let fotoMarcadaParaBorrar = false;
+let fotoCapturadaTemp = null; 
+let previewContainerActual = ""; 
 
-// ESCUCHADOR DE DATOS: Sincronización en tiempo real
+// --- SISTEMA DE CÁMARA (MediaDevices API) ---
+
+window.abrirCamara = async function(containerId) {
+    previewContainerActual = containerId;
+    const overlay = document.getElementById('camera-overlay');
+    const video = document.getElementById('video-stream');
+    overlay.classList.remove('hidden');
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: "environment" }, // Intenta abrir la cámara trasera
+            audio: false 
+        });
+        video.srcObject = stream;
+        window.currentStream = stream;
+    } catch (err) {
+        alert("La cámara no está disponible. Asegúrate de estar en un sitio seguro (HTTPS).");
+        cerrarCamara();
+    }
+};
+
+window.capturarFoto = function() {
+    const video = document.getElementById('video-stream');
+    const canvas = document.getElementById('canvas-photo');
+    const context = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Guardamos la foto en una variable temporal comprimida
+    fotoCapturadaTemp = canvas.toDataURL('image/jpeg', 0.6);
+
+    // Pintamos la miniatura en el formulario
+    const container = document.getElementById(previewContainerActual);
+    container.innerHTML = `<img src="${fotoCapturadaTemp}" class="img-preview-form">`;
+
+    cerrarCamara();
+};
+
+window.cerrarCamara = function() {
+    if (window.currentStream) {
+        window.currentStream.getTracks().forEach(track => track.stop());
+    }
+    document.getElementById('camera-overlay').classList.add('hidden');
+};
+
+// --- SINCRONIZACIÓN FIREBASE ---
+
 db.ref('/').on('value', (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -27,7 +77,8 @@ db.ref('/').on('value', (snapshot) => {
     }
 });
 
-// COMPROBACIÓN INICIAL DE SESIÓN
+// --- SESIÓN Y LOGIN ---
+
 window.onload = function() {
     if (localStorage.getItem('almacen_juanjo_login') === 'true') {
         document.getElementById('login-screen').classList.add('hidden');
@@ -35,11 +86,9 @@ window.onload = function() {
     }
 };
 
-// LOGIN (admin/admin123)
 window.verificarAcceso = function() {
     const userVal = document.getElementById('user').value.trim();
     const passVal = document.getElementById('pass').value;
-
     if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
         localStorage.setItem('almacen_juanjo_login', 'true');
         document.getElementById('login-screen').classList.add('hidden');
@@ -52,7 +101,6 @@ window.verificarAcceso = function() {
     }
 };
 
-// CERRAR SESIÓN
 window.cerrarSesion = function() {
     if (confirm("¿Cerrar sesión?")) {
         localStorage.removeItem('almacen_juanjo_login');
@@ -60,13 +108,16 @@ window.cerrarSesion = function() {
     }
 };
 
-// GUARDAR O ACTUALIZAR STOCK
+// --- ACCIONES DE INVENTARIO ---
+
 document.getElementById('form-nuevo').addEventListener('submit', function(e) {
     e.preventDefault();
     const nombreInput = document.getElementById('nombre').value.trim();
+    const catNueva = document.getElementById('categoria-nueva').value;
     const cantNueva = parseInt(document.getElementById('cantidad').value);
     const costoNuevo = document.getElementById('costo').value || '0';
     const fechaNueva = document.getElementById('fecha').value;
+    const stockMinVal = parseInt(document.getElementById('stock-minimo').value) || 0;
 
     const itemExistente = inventario.find(item => item.nombre.toLowerCase() === nombreInput.toLowerCase());
 
@@ -74,101 +125,125 @@ document.getElementById('form-nuevo').addEventListener('submit', function(e) {
         itemExistente.ubicaciones["Almacén"] += cantNueva;
         itemExistente.costo = costoNuevo;
         itemExistente.fecha = fechaNueva;
+        itemExistente.stockMinimo = stockMinVal;
+        if (fotoCapturadaTemp) itemExistente.foto = fotoCapturadaTemp;
         anotarHistorial(itemExistente.nombre, `Compra adicional: +${cantNueva} un.`);
     } else {
         const nuevo = {
             id: Date.now(),
             nombre: nombreInput,
+            categoria: catNueva,
             costo: costoNuevo,
             fecha: fechaNueva,
+            stockMinimo: stockMinVal,
+            foto: fotoCapturadaTemp, 
             ubicaciones: { "Almacén": cantNueva }
         };
         inventario.push(nuevo);
         anotarHistorial(nombreInput, `Nueva compra: ${cantNueva} un.`);
     }
-    
     actualizarFirebase();
     this.reset();
+    fotoCapturadaTemp = null; 
+    document.getElementById('preview-nueva').innerHTML = ""; 
     showScreen('inicio');
 });
 
-// EDITAR NOMBRE
-window.editarNombre = function(index) {
-    const nuevoNombre = prompt("Editar nombre de la herramienta:", inventario[index].nombre);
-    if (nuevoNombre !== null && nuevoNombre.trim() !== "") {
-        const nombreAnterior = inventario[index].nombre;
-        inventario[index].nombre = nuevoNombre.trim();
-        anotarHistorial(nuevoNombre, `Nombre cambiado (era: ${nombreAnterior})`);
-        actualizarFirebase();
+window.abrirEditor = function(index) {
+    const item = inventario[index];
+    fotoMarcadaParaBorrar = false;
+    fotoCapturadaTemp = null;
+    
+    document.getElementById('edit-index').value = index;
+    document.getElementById('edit-nombre').value = item.nombre;
+    document.getElementById('edit-categoria').value = item.categoria || 'Manual';
+    document.getElementById('edit-costo').value = item.costo;
+    document.getElementById('edit-stock-minimo').value = item.stockMinimo || 0;
+    
+    const previewCont = document.getElementById('preview-editar');
+    previewCont.innerHTML = "";
+    if (item.foto) {
+        previewCont.innerHTML = `<img src="${item.foto}" class="img-preview-form">`;
+        document.getElementById('btn-borrar-foto-edit').classList.remove('hidden');
+    } else {
+        document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
+    }
+    
+    showScreen('editar');
+};
+
+window.eliminarFotoEdicion = function() {
+    if(confirm("¿Quitar la foto?")) {
+        fotoMarcadaParaBorrar = true;
+        document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
+        document.getElementById('preview-editar').innerHTML = "<p style='color:red; font-size:0.8rem;'>Foto eliminada. Guarda para confirmar.</p>";
     }
 };
 
-// SALIDA A OBRA
+document.getElementById('form-editar').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const index = document.getElementById('edit-index').value;
+    const item = inventario[index];
+    
+    item.nombre = document.getElementById('edit-nombre').value.trim();
+    item.categoria = document.getElementById('edit-categoria').value;
+    item.costo = document.getElementById('edit-costo').value;
+    item.stockMinimo = parseInt(document.getElementById('edit-stock-minimo').value) || 0;
+    
+    if (fotoCapturadaTemp) {
+        item.foto = fotoCapturadaTemp;
+    } else if (fotoMarcadaParaBorrar) {
+        delete item.foto;
+    }
+
+    actualizarFirebase();
+    fotoCapturadaTemp = null;
+    showScreen('inicio');
+});
+
+// --- LÓGICA DE MOVIMIENTOS ---
+
 window.salidaObra = function(index) {
     let item = inventario[index];
     let cantEnAlmacen = item.ubicaciones["Almacén"];
-
     if (cantEnAlmacen > 0) {
         const obraDestino = prompt("¿A qué obra envías " + item.nombre + "?");
         if (obraDestino) {
-            let cantEnviar = prompt(`¿Cuántas unidades envías a ${obraDestino}?`, "1");
+            let cantEnviar = prompt(`¿Cuántas unidades envías?`, "1");
             cantEnviar = parseInt(cantEnviar);
-
             if (!isNaN(cantEnviar) && cantEnviar > 0 && cantEnviar <= cantEnAlmacen) {
                 item.ubicaciones["Almacén"] -= cantEnviar;
                 if (!item.ubicaciones[obraDestino]) item.ubicaciones[obraDestino] = 0;
                 item.ubicaciones[obraDestino] += cantEnviar;
                 anotarHistorial(item.nombre, `Enviado a ${obraDestino}: ${cantEnviar} un.`);
                 actualizarFirebase();
-            } else {
-                alert("Cantidad no válida.");
             }
         }
-    } else {
-        alert("No queda stock en Almacén.");
     }
 };
 
-// REGRESO RÁPIDO
 window.regresoRapido = function(index, nombreObra) {
     let item = inventario[index];
     let cantEnObra = item.ubicaciones[nombreObra];
-
-    let cantRegreso = prompt(`¿Cuántas unidades regresan de ${nombreObra}?`, "1");
+    let cantRegreso = prompt(`¿Cuántas unidades regresan?`, "1");
     cantRegreso = parseInt(cantRegreso);
-
     if (!isNaN(cantRegreso) && cantRegreso > 0 && cantRegreso <= cantEnObra) {
         item.ubicaciones[nombreObra] -= cantRegreso;
         item.ubicaciones["Almacén"] += cantRegreso;
         anotarHistorial(item.nombre, `Regresó de ${nombreObra}: ${cantRegreso} un.`);
         actualizarFirebase();
-    } else {
-        alert("Cantidad no válida.");
     }
 };
 
-// ELIMINAR
 window.eliminar = function(index) {
-    if(confirm("¿Borrar definitivamente de la nube?")) {
+    if(confirm("¿Borrar herramienta?")) {
         inventario.splice(index, 1);
         actualizarFirebase();
     }
 };
 
-// BORRAR HISTORIAL
-window.borrarHistorial = function() {
-    if(confirm("¿Limpiar historial de la nube?")) {
-        historial = [];
-        actualizarFirebase();
-    }
-};
-
-// ACTUALIZAR FIREBASE
 function actualizarFirebase() {
-    db.ref('/').set({
-        inventario: inventario,
-        historial: historial
-    });
+    db.ref('/').set({ inventario: inventario, historial: historial });
 }
 
 function anotarHistorial(nombre, accion) {
@@ -176,26 +251,22 @@ function anotarHistorial(nombre, accion) {
     if (historial.length > 50) historial.pop();
 }
 
-// FORMATEAR FECHA
 function formatearFechaVisual(fechaStr) {
     if (!fechaStr) return 's/f'; 
     const [anio, mes, dia] = fechaStr.split('-'); 
     return `${dia}-${mes}-${anio}`; 
 }
 
-// MENÚ
 function toggleMenu() {
     document.getElementById('sidebar').classList.toggle('active');
     document.getElementById('overlay').classList.toggle('active');
 }
 
-// CAMBIAR PANTALLA
 function showScreen(screenId) {
     document.querySelectorAll('.view').forEach(s => s.classList.add('hidden'));
     document.getElementById('screen-' + screenId).classList.remove('hidden');
     const buscadorCont = document.getElementById('busqueda-container');
     if (buscadorCont) {
-        // Mostramos el buscador en Inicio, Salida y Regreso
         if (['inicio', 'salida', 'regreso'].includes(screenId)) buscadorCont.classList.remove('hidden');
         else buscadorCont.classList.add('hidden');
     }
@@ -203,21 +274,40 @@ function showScreen(screenId) {
     renderizar();
 }
 
-// DIBUJAR LISTAS
+window.filtrarCategoria = function(cat) {
+    filtroCategoriaActual = cat;
+    document.querySelectorAll('.btn-filtro').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText === cat) btn.classList.add('active');
+    });
+    renderizar();
+};
+
 function renderizar() {
     const lTotal = document.getElementById('lista-total');
     const lSalida = document.getElementById('lista-salida');
     const lRegreso = document.getElementById('lista-regreso');
     const lHistorial = document.getElementById('lista-historial');
+    const lPorObra = document.getElementById('lista-por-obra');
     const buscador = document.getElementById('buscador');
-    const filtro = buscador ? buscador.value.toLowerCase() : '';
+    const filtroTexto = buscador ? buscador.value.toLowerCase() : '';
 
     if (!lTotal || document.getElementById('app-container').classList.contains('hidden')) return;
 
-    lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = '';
+    lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = ''; lPorObra.innerHTML = '';
+
+    let obrasEncontradas = {};
 
     inventario.forEach((item, index) => {
-        if (!item.nombre.toLowerCase().includes(filtro)) return;
+        if (!item.nombre.toLowerCase().includes(filtroTexto)) return;
+        if (filtroCategoriaActual !== 'Todas' && item.categoria !== filtroCategoriaActual) return;
+
+        let cantAlmacen = item.ubicaciones["Almacén"] || 0;
+        let esCritico = (item.stockMinimo && cantAlmacen <= item.stockMinimo);
+        let estiloNombre = esCritico ? 'color: #e74c3c; font-weight: 900; animation: blink 1s infinite;' : '';
+        let avisoCritico = esCritico ? '<br><small style="color:red">⚠️ ¡REPOSICIÓN NECESARIA!</small>' : '';
+
+        let fotoHTML = item.foto ? `<img src="${item.foto}" class="item-foto">` : `<div class="item-foto-vacia">📷</div>`;
 
         let badgesHTML = '';
         let badgesRegresoHTML = ''; 
@@ -228,6 +318,10 @@ function renderizar() {
                 let clase = (loc === "Almacén") ? "badge-almacen" : "badge-obra";
                 let textoBadge = `<span class="${clase}">📍 ${loc}: ${cant} un.</span>`;
                 badgesHTML += textoBadge;
+                if (cant > 0) {
+                    if (!obrasEncontradas[loc]) obrasEncontradas[loc] = [];
+                    obrasEncontradas[loc].push(`${item.nombre} (${cant} un.)`);
+                }
                 if (loc !== "Almacén" && cant > 0) {
                     badgesRegresoHTML += `<div class="fila-regreso">${textoBadge}<button class="btn-mini-regreso" onclick="regresoRapido(${index}, '${loc}')">↖ Devolver</button></div>`;
                 } else {
@@ -236,44 +330,42 @@ function renderizar() {
             }
         }
 
-        // Definimos el botón pequeño para la sección de salida
         const btnSalidaHTML = `<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button>`;
+        const categoriaLabel = `<span class="tag-categoria">${item.categoria || 'Manual'}</span>`;
 
-        // Card para Inventario Total (SIN botón de enviar)
-        const cardTotalHTML = `
-            <div class="item-card">
-                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
-                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
-                ${badgesHTML}
-                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
+        const cuerpoCard = `
+            <div class="card-cuerpo">
+                ${fotoHTML}
+                <div class="card-info">
+                    ${categoriaLabel}
+                    <span class="item-nombre" style="${estiloNombre}">${item.nombre} ${avisoCritico}</span>
+                    <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
+                    ${badgesHTML}
+                </div>
             </div>
         `;
 
-        // Card para Salida (CON botón de enviar)
-        const cardSalidaHTML = `
-            <div class="item-card">
-                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
-                ${btnSalidaHTML}
-                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
-                ${badgesHTML}
-                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
+        lTotal.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}<button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button></div>`;
+        lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}${btnSalidaHTML}</div>`;
+        lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">
+            <div class="card-cuerpo">
+                ${fotoHTML}
+                <div class="card-info">
+                    ${categoriaLabel}
+                    <span class="item-nombre" style="${estiloNombre}">${item.nombre}</span>
+                    <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
+                    ${badgesRegresoHTML}
+                </div>
             </div>
-        `;
-
-        // Card para Regreso
-        const cardRegresoHTML = `
-            <div class="item-card">
-                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
-                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
-                ${badgesRegresoHTML}
-                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
-            </div>
-        `;
-        
-        lTotal.innerHTML += cardTotalHTML;
-        lSalida.innerHTML += cardSalidaHTML;
-        lRegreso.innerHTML += cardRegresoHTML; 
+        </div>`; 
     });
+
+    for (let obra in obrasEncontradas) {
+        lPorObra.innerHTML += `<div class="item-card" style="border-left: 6px solid #f1c40f">
+            <span class="item-nombre">📍 Obra: ${obra}</span>
+            Contenido: <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul>
+        </div>`;
+    }
 
     historial.forEach(h => {
         lHistorial.innerHTML += `<div class="hist-item"><span class="hist-fecha">${h.fecha}</span><br><strong>${h.nombre}</strong>: ${h.accion}</div>`;
@@ -281,7 +373,6 @@ function renderizar() {
 }
 
 function exportarExcel() {
-    if (inventario.length === 0) return alert("No hay datos.");
     let csvContent = "Nombre;Costo;Fecha;Ubicacion;Cantidad\n";
     inventario.forEach(item => {
         for (let loc in item.ubicaciones) {
@@ -296,3 +387,10 @@ function exportarExcel() {
     link.download = `Almacen_EcoStruct_${new Date().toLocaleDateString()}.csv`;
     link.click();
 }
+
+window.borrarHistorial = function() {
+    if(confirm("¿Limpiar historial?")) {
+        historial = [];
+        actualizarFirebase();
+    }
+};

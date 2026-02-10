@@ -82,253 +82,431 @@ h2 {
 }
 
 @keyframes logo { 
-  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Inicia invisible, pequeña y sin rotar */
-  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina visible, tamaño real y dando 4 vueltas */
+  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Inicia pequeño */
+  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina rotado */
+}
+
+/* Animación de parpadeo para el stock crítico */
+@keyframes blink {
+  0% { opacity: 1; } /* Estado inicial visible */
+  50% { opacity: 0.6; } /* Estado medio algo transparente */
+  100% { opacity: 1; } /* Vuelve a ser visible */
+}
+
+/* --- SISTEMA DE CÁMARA --- */
+.camera-overlay {
+  position: fixed; /* Ocupa toda la pantalla flotando */
+  top: 0; /* Alineado arriba */
+  left: 0; /* Alineado a la izquierda */
+  width: 100%; /* Ancho total */
+  height: 100%; /* Alto total */
+  background: black; /* Fondo negro para resaltar el vídeo */
+  z-index: 1000; /* Por encima de cualquier otro elemento */
+  display: flex; /* Para centrar el vídeo y botones */
+  flex-direction: column; /* Elementos uno debajo de otro */
+  align-items: center; /* Centrado horizontal */
+  justify-content: center; /* Centrado vertical */
+}
+
+#video-stream {
+  width: 100%; /* El vídeo ocupa todo el ancho */
+  max-height: 80vh; /* Altura máxima para dejar sitio a botones */
+  background: #222; /* Fondo oscuro mientras carga */
+  border: 2px solid #3498db; /* Borde azul para el visor */
+}
+
+.camera-controls {
+  padding: 20px; /* Espacio alrededor de los botones */
+  display: flex; /* Botones en una fila */
+  gap: 20px; /* Espacio entre botones */
+}
+
+.btn-capture {
+  background: #e74c3c; /* Rojo para el botón de disparo */
+  color: white; /* Texto blanco */
+  padding: 15px 30px; /* Tamaño grande para tocar fácil */
+  border: 5px solid rgba(255,255,255,0.3); /* Borde tipo lente */
+  border-radius: 50px; /* Forma redondeada */
+  font-weight: bold; /* Texto resaltado */
+  cursor: pointer; /* Mano al pasar */
+}
+
+.btn-close-cam {
+  background: #666; /* Gris para el botón de cancelar */
+  color: white; /* Texto blanco */
+  padding: 10px 20px; /* Tamaño estándar */
+  border: none; /* Sin borde */
+  border-radius: 6px; /* Redondeo suave */
+  cursor: pointer; /* Mano al pasar */
+}
+
+.btn-abrir-cam {
+  width: 100%; /* Botón de ancho completo en el formulario */
+  background: #3498db; /* Azul para llamar a la acción */
+  color: white; /* Texto blanco */
+  padding: 12px; /* Relleno interno */
+  border: none; /* Sin borde */
+  border-radius: 6px; /* Redondeo suave */
+  font-weight: bold; /* Texto resaltado */
+  margin-bottom: 10px; /* Separación con el siguiente elemento */
+  cursor: pointer; /* Mano al pasar */
 }
 
 /* --- Menú Lateral --- */
 .sidebar { 
-  position: fixed; /* Menú flotante fijo */
-  left: -250px; /* Escondido por defecto a la izquierda */
-  top: 0; /* Alineado al techo */
-  width: 200px; /* Ancho del menú desplegable */
-  height: 100%; /* Ocupa todo el alto de la pantalla */
-  background: #fff; /* Fondo blanco para las opciones */
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra derecha para profundidad */
-  transition: 0.3s; /* Velocidad de la animación al abrirse */
-  z-index: 200; /* Por encima de la barra superior */
-  padding-top: 20px; /* Espacio superior interno */
-  font-style: italic; /* Estilo de fuente cursiva */
-  font-family: Sriracha; /* Fuente personalizada */
+  position: fixed; /* Flotante a la izquierda */
+  left: -250px; /* Escondido por defecto */
+  top: 0; /* Al techo */
+  width: 200px; /* Ancho del menú */
+  height: 100%; /* Alto total */
+  background: #fff; /* Fondo blanco */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra para profundidad */
+  transition: 0.3s; /* Animación de apertura suave */
+  z-index: 200; /* Por encima del contenido normal */
+  padding-top: 20px; /* Espacio superior */
+  font-style: italic; /* Texto en cursiva */
+  font-family: Sriracha; /* Tu fuente personalizada */
 }
 
 .sidebar.active { 
-  left: 0; /* Posición visible al activarse */
+  left: 0; /* Se muestra al activarse */
 }
 
 .sidebar-header { 
   padding: 15px; /* Relleno interno */
-  font-weight: bold; /* Texto en negrita */
+  font-weight: bold; /* Negrita */
   border-bottom: 1px solid #eee; /* Línea divisoria inferior */
   margin-bottom: 10px; /* Espacio antes de los enlaces */
   color: #2c3e50; /* Color azul para el título */
   text-align: center; /* Texto centrado */
-  font-family: Piedra; /* Tu fuente personalizada para el título */
+  font-family: Piedra; /* Tu fuente para el título */
 }
 
 .sidebar a { 
-  display: block; /* Cada enlace ocupa toda la línea */
-  padding: 15px; /* Espacio grande para facilitar el toque táctil */
-  color: #333; /* Color de texto de los enlaces */
-  text-decoration: none; /* Quita el subrayado por defecto */
-  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
+  display: block; /* Cada enlace en su propia línea */
+  padding: 15px; /* Espacio grande para tocar con el dedo */
+  color: #333; /* Color de texto gris oscuro */
+  text-decoration: none; /* Sin subrayado */
+  border-bottom: 1px solid #f9f9f9; /* Separación sutil */
 }
 
-/* --- Estilo botones especiales menú --- */
-.btn-exportar-menu {
-  background: #d4edda; /* Fondo verde suave */
-  color: #155724 !important; /* Texto verde oscuro resaltado */
-  font-weight: bold; /* Texto en negrita */
+.btn-exportar-menu { 
+  background: #d4edda; /* Verde suave para exportar */
+  color: #155724 !important; /* Texto verde oscuro */
+  font-weight: bold; /* Negrita */
 }
 
-.btn-logout-menu {
-  background: #f8d7da; /* Fondo rojo suave para destacar */
+.btn-logout-menu { 
+  background: #f8d7da; /* Rojo suave para logout */
   color: #721c24 !important; /* Texto rojo oscuro */
-  font-weight: bold; /* Texto en negrita */
-  margin-top: 20px; /* Espacio para separarlo del resto */
+  font-weight: bold; /* Negrita */
+  margin-top: 20px; /* Separación superior */
 }
 
-/* --- Capa Oscura --- */
+/* --- Capa Oscura Overlay --- */
 #overlay { 
-  display: none; /* Oculta por defecto */
-  position: fixed; /* Cubre toda la pantalla */
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background: rgba(0,0,0,0.5); /* Color negro con transparencia */
-  z-index: 150; 
+  display: none; /* Oculto por defecto */
+  position: fixed; /* Fijo cubriendo todo */
+  top: 0; /* Al techo */
+  left: 0; /* A la pared izquierda */
+  width: 100%; /* Ancho total */
+  height: 100%; /* Alto total */
+  background: rgba(0,0,0,0.5); /* Negro transparente */
+  z-index: 150; /* Entre el contenido y el menú */
 }
 
 #overlay.active { 
-  display: block; /* Visible cuando el menú está abierto */
+  display: block; /* Se muestra al abrir el menú */
 }
 
-/* --- Contenedores y Tarjetas --- */
+/* --- Contenedores y Vistas --- */
 .container { 
-  padding: 15px; /* Espaciado interno del contenedor principal */
+  padding: 15px; /* Espacio interno lateral */
 }
 
 .view { 
-  animation: fadeIn 0.3s; /* Animación de aparición suave */
+  animation: fadeIn 0.3s; /* Aparece suavemente */
 }
 
 .hidden { 
-  display: none; /* Oculta elementos que no deben verse */
+  display: none; /* Oculta elementos */
 }
 
 @keyframes fadeIn { 
-  from { opacity: 0; } /* Inicia totalmente transparente */
-  to { opacity: 1; } /* Termina totalmente opaco */
+  from { opacity: 0; } /* Inicia invisible */
+  to { opacity: 1; } /* Termina visible */
 }
 
+/* --- Tarjetas (Cards) --- */
 .card { 
-  background: white; /* Fondo blanco para tarjetas */
-  padding: 12px; /* Espaciado interno */
-  border-radius: 8px; /* Bordes redondeados */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave inferior */
-  margin-bottom: 15px; /* Separación entre tarjetas */
+  background: white; /* Fondo blanco */
+  padding: 12px; /* Espacio interno */
+  border-radius: 8px; /* Redondeo de esquinas */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+  margin-bottom: 15px; /* Espacio debajo de la tarjeta */
 }
 
 input { 
-  width: 100%; /* Ocupa todo el ancho disponible */
-  padding: 12px; /* Relleno para que sea fácil escribir */
-  margin-bottom: 10px; /* Separación con el siguiente input */
+  width: 100%; /* Ancho total */
+  padding: 12px; /* Espacio para escribir */
+  margin-bottom: 10px; /* Separación con el siguiente campo */
   border: 1px solid #ddd; /* Borde gris claro */
   border-radius: 6px; /* Redondeo de esquinas */
-  font-size: 16px; /* Tamaño de letra legible */
+  font-size: 16px; /* Texto grande para leer bien */
 }
 
-/* --- Buscador Específico --- */
-#buscador {
-  margin-bottom: 0; /* Quita el margen inferior dentro de su card */
-  border: 2px solid #3498db; /* Borde azul para resaltarlo */
-  background: #fdfdfd; /* Fondo casi blanco */
+.input-select { 
+  width: 100%; /* Ancho total del desplegable */
+  padding: 12px; /* Relleno interno */
+  margin-bottom: 10px; /* Separación inferior */
+  border: 1px solid #ddd; /* Borde gris claro */
+  border-radius: 6px; /* Redondeo */
+  font-size: 16px; /* Texto legible */
+  background: white; /* Fondo blanco */
 }
 
-.label-input {
-  display: block; /* Ocupa su propia línea */
-  font-size: 0.85rem; /* Letra pequeña para la etiqueta */
-  color: #666; /* Gris oscuro */
-  margin-bottom: 5px; /* Espacio con el input inferior */
-  font-weight: bold; /* Texto resaltado */
+/* --- Filtros de Categoría --- */
+.contenedor-filtros { 
+  display: flex; /* Botones en fila */
+  overflow-x: auto; /* Scroll si no caben todos */
+  gap: 8px; /* Espacio entre botones */
+  margin-top: 10px; /* Separación superior */
+  padding-bottom: 5px; /* Espacio para el dedo al scrollear */
 }
 
-.btn-save { 
-  width: 100%; /* Botón de ancho completo */
-  background: #28a745; /* Color verde de éxito */
-  color: white; /* Letras blancas */
+.btn-filtro { 
+  background: #eee; /* Gris claro por defecto */
   border: none; /* Sin borde */
-  padding: 15px; /* Relleno generoso para pulsar */
-  border-radius: 6px; /* Bordes redondeados */
-  font-weight: bold; /* Texto resaltado */
+  padding: 6px 12px; /* Relleno interno */
+  border-radius: 20px; /* Forma de píldora */
+  font-size: 0.75rem; /* Texto pequeño */
+  white-space: nowrap; /* No rompe la palabra */
+  cursor: pointer; /* Mano al pasar */
 }
 
-/* --- Tarjetas de Inventario --- */
+.btn-filtro.active { 
+  background: #3498db; /* Azul si está seleccionado */
+  color: white; /* Texto blanco */
+  font-weight: bold; /* Negrita */
+}
+
+.tag-categoria { 
+  font-size: 0.6rem; /* Texto minúsculo */
+  background: #f0f2f5; /* Gris suave neutro */
+  color: #555; /* Texto gris */
+  padding: 2px 5px; /* Relleno mini */
+  border-radius: 4px; /* Redondeo leve */
+  display: inline-block; /* Ocupa solo su espacio */
+  margin-bottom: 4px; /* Separación con el nombre */
+  text-transform: uppercase; /* Siempre en mayúsculas */
+}
+
+/* --- Vistas Previas de Imagen --- */
+.container-preview-form { 
+  text-align: center; /* Centra la miniatura */
+  margin-bottom: 10px; /* Espacio inferior */
+}
+
+.img-preview-form { 
+  max-width: 100px; /* Ancho máximo controlado */
+  height: auto; /* Proporcional */
+  border-radius: 8px; /* Redondeo */
+  border: 2px solid #3498db; /* Borde azul para destacar */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+/* --- Tarjetas de Inventario (Item Card) --- */
 .item-card { 
   background: white; /* Fondo blanco */
-  padding: 12px; /* Espacio interno compacto */
-  border-radius: 10px; /* Esquinas redondeadas */
-  margin-bottom: 10px; /* Separación entre tarjetas */
-  border-left: 6px solid #3498db; /* Barra azul lateral distintiva */
-  position: relative; /* Para posicionar elementos internos */
+  padding: 12px; /* Relleno interno */
+  border-radius: 10px; /* Esquinas muy redondeadas */
+  margin-bottom: 10px; /* Separación entre fichas */
+  border-left: 6px solid #3498db; /* Franja azul corporativa */
+  position: relative; /* Base para el botón de borrar absoluto */
+  user-select: none; /* No deja seleccionar texto al hacer doble clic */
+}
+
+.card-cuerpo { 
+  display: flex; /* Foto a la izquierda, info a la derecha */
+  align-items: flex-start; /* Alineado al techo de la tarjeta */
+  gap: 12px; /* Separación entre foto e información */
+}
+
+.item-foto { 
+  width: 65px; /* Ancho fijo de miniatura */
+  height: 65px; /* Alto fijo de miniatura */
+  object-fit: cover; /* Ajusta la imagen al cuadrado sin deformar */
+  border-radius: 8px; /* Redondeo de foto */
+  border: 1px solid #ddd; /* Borde gris fino */
+  flex-shrink: 0; /* Evita que la foto se aplaste */
+}
+
+.item-foto-vacia { 
+  width: 65px; /* Mismo ancho que la foto */
+  height: 65px; /* Mismo alto que la foto */
+  background: #f9f9f9; /* Gris muy claro */
+  display: flex; /* Para centrar el icono de cámara */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  border-radius: 8px; /* Redondeo */
+  border: 1px dashed #ccc; /* Borde discontinuo gris */
+  color: #bbb; /* Icono gris claro */
+  font-size: 1.2rem; /* Tamaño del icono */
+  flex-shrink: 0; /* No se aplasta */
+}
+
+.card-info { 
+  flex-grow: 1; /* El texto ocupa todo el espacio que queda */
 }
 
 .item-nombre { 
   font-weight: bold; /* Nombre en negrita */
-  font-size: 1.1rem; /* Tamaño de letra un poco más grande */
-  display: inline-block; /* Permite elementos al lado */
-  margin-right: 10px; /* Separación con el botón */
-  cursor: pointer; /* Indica que se puede interactuar */
-  border-bottom: 1px dashed transparent; /* Preparado para el hover */
-  transition: 0.2s; /* Animación suave */
+  font-size: 1rem; /* Tamaño estándar */
+  display: block; /* En su propia línea */
+  margin-right: 25px; /* Margen para que el botón borrar no lo pise */
+  cursor: pointer; /* Mano al pasar */
 }
 
-.item-nombre:hover {
+.item-nombre:hover { 
   color: #3498db; /* Cambia a azul al pasar el ratón */
-  border-bottom: 1px dashed #3498db; /* Muestra subrayado discontinuo */
 }
 
-.info-stock {
-  font-size: 0.8rem; /* Tamaño algo más pequeño */
-  color: #666; /* Color gris para menos énfasis */
-  margin: 5px 0; /* Separación vertical */
+.info-stock { 
+  font-size: 0.75rem; /* Letra pequeña informativa */
+  color: #666; /* Gris medio */
+  margin: 3px 0; /* Separación vertical */
 }
 
 .badge-obra { 
-  display: inline-block; /* Se ajusta al contenido */
-  background: #fff3cd; /* Fondo amarillo claro */
-  color: #856404; /* Texto marrón oscuro */
-  padding: 3px 8px; /* Relleno compacto */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 0.75rem; /* Letra pequeña */
+  display: inline-block; /* Ocupa solo el ancho del texto */
+  background: #fff3cd; /* Fondo amarillo obra */
+  color: #856404; /* Texto marrón legible */
+  padding: 2px 6px; /* Relleno compacto */
+  border-radius: 4px; /* Redondeo suave */
+  font-size: 0.7rem; /* Texto minúsculo */
   margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral */
-  border: 1px solid #ffeeba; /* Borde amarillo suave */
+  margin-right: 4px; /* Separación lateral entre badges */
+  border: 1px solid #ffeeba; /* Borde sutil amarillo */
 }
 
 .badge-almacen { 
-  display: inline-block; /* Se ajusta al contenido */
-  background: #d4edda; /* Fondo verde claro */
-  color: #155724; /* Texto verde oscuro */
-  padding: 3px 8px; /* Relleno compacto */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 0.75rem; /* Letra pequeña */
+  display: inline-block; /* Ocupa solo el ancho del texto */
+  background: #d4edda; /* Fondo verde almacén */
+  color: #155724; /* Texto verde oscuro legible */
+  padding: 2px 6px; /* Relleno compacto */
+  border-radius: 4px; /* Redondeo suave */
+  font-size: 0.7rem; /* Texto minúsculo */
   margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral */
-  border: 1px solid #c3e6cb; /* Borde verde suave */
+  margin-right: 4px; /* Separación lateral entre badges */
+  border: 1px solid #c3e6cb; /* Borde sutil verde */
 }
 
-.fila-regreso {
-  display: flex; /* Alinea badge y botón */
+/* --- Controles de Retorno --- */
+.fila-regreso { 
+  display: flex; /* Badge y botón de devolver en línea */
   align-items: center; /* Centrado vertical */
-  gap: 8px; /* Espacio entre elementos */
-  margin-top: 4px; /* Separación superior */
+  gap: 5px; /* Separación mínima */
+  margin-top: 3px; /* Separación con la línea superior */
 }
 
-.btn-mini-regreso {
-  background: #3498db; /* Azul */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  padding: 3px 6px; /* Relleno compacto */
-  border-radius: 4px; /* Bordes redondeados */
-  font-size: 0.7rem; /* Letra muy pequeña */
-  font-weight: bold; /* Texto resaltado */
+.btn-mini-regreso { 
+  background: #3498db; /* Azul para retorno */
+  color: white; /* Blanco */
+  border: none; /* Sin bordes */
+  padding: 2px 5px; /* Tamaño mínimo */
+  border-radius: 4px; /* Redondeo leve */
+  font-size: 0.65rem; /* Texto muy pequeño */
+  font-weight: bold; /* Negrita */
+  cursor: pointer; /* Mano al pasar */
 }
 
-.btn-enviar-peque {
-  background: #e74c3c; /* Rojo */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  padding: 4px 10px; /* Relleno compacto */
-  border-radius: 15px; /* Forma de píldora */
-  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
-  font-weight: bold; /* Texto resaltado */
-  vertical-align: middle; /* Alineación vertical */
-  font-style: italic; /* Estilo cursiva según tu cambio */
+/* --- Botones de Acción --- */
+.btn-save { 
+  width: 100%; /* Ancho total del formulario */
+  background: #28a745; /* Verde para guardar */
+  color: white; /* Blanco */
+  border: none; /* Sin bordes */
+  padding: 15px; /* Grande para móviles */
+  border-radius: 6px; /* Redondeo */
+  font-weight: bold; /* Negrita */
+  cursor: pointer; /* Mano al pasar */
+}
+
+.btn-enviar-peque { 
+  background: #e74c3c; /* Rojo para salida a obra */
+  color: white; /* Blanco */
+  border: none; /* Sin bordes */
+  padding: 5px 12px; /* Tamaño cómodo para dedo */
+  border-radius: 15px; /* Forma de píldora redonda */
+  font-size: 0.75rem; /* Texto legible pequeño */
+  font-weight: bold; /* Negrita */
+  font-style: italic; /* Cursiva según tu diseño */
+  margin-top: 8px; /* Separación con la información superior */
+  cursor: pointer; /* Mano al pasar */
 }
 
 .btn-borrar { 
-  background: #eee; /* Gris muy claro */
+  background: #eee; /* Gris muy claro sutil */
   color: #888; /* Texto gris suave */
-  position: absolute; /* Posición absoluta */
-  right: 8px; /* Distancia derecha */
-  top: 8px; /* Distancia superior */
-  padding: 3px 6px; /* Relleno compacto */
-  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
-  border: none; /* Sin borde */
-  border-radius: 5px; /* Bordes redondeados */
-  font-family: Sriracha; /* Fuente personalizada según tu cambio */
+  position: absolute; /* Esquina superior derecha de la tarjeta */
+  right: 8px; /* Separación pared derecha */
+  top: 8px; /* Separación techo */
+  padding: 3px 6px; /* Tamaño minúsculo */
+  font-size: 0.75rem; /* Texto pequeño */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Redondeo */
+  font-family: Sriracha; /* Tu fuente personalizada */
+  cursor: pointer; /* Mano al pasar */
+}
+
+.btn-borrar-foto-edit { 
+  width: 100%; /* Ancho total dentro del editor */
+  background: #f8d7da; /* Rojo muy claro para advertencia */
+  color: #721c24; /* Texto rojo oscuro */
+  border: 1px solid #f5c6cb; /* Borde rojo sutil */
+  padding: 8px; /* Relleno interno */
+  border-radius: 6px; /* Redondeo */
+  font-size: 0.8rem; /* Texto pequeño */
+  cursor: pointer; /* Mano al pasar */
+  font-weight: bold; /* Negrita */
+  margin-bottom: 10px; /* Separación inferior */
 }
 
 .btn-borrar-hist { 
-  width: 100%; /* Ancho total */
-  background: #6c757d; /* Gris para historial */
-  color: white; /* Texto blanco */
-  padding: 10px; /* Relleno interno */
-  border-radius: 5px; /* Bordes redondeados */
-  margin-bottom: 15px; /* Margen inferior */
-  border: none; /* Sin borde */
+  width: 100%; /* Botón global de historial */
+  background: #6c757d; /* Gris oscuro neutro */
+  color: white; /* Blanco */
+  padding: 10px; /* Relleno generoso */
+  border-radius: 5px; /* Redondeo suave */
+  margin-bottom: 15px; /* Separación inferior */
+  border: none; /* Sin bordes */
+  cursor: pointer; /* Mano al pasar */
 }
 
+/* --- Historial --- */
 .hist-item { 
   background: white; /* Fondo blanco */
   padding: 10px; /* Relleno interno */
-  border-bottom: 1px solid #eee; /* Separador inferior */
-  font-size: 0.85rem; /* Letra pequeña */
+  border-bottom: 1px solid #eee; /* Línea divisoria gris claro */
+  font-size: 0.85rem; /* Texto pequeño */
 }
 
-.hist-fecha {
-  color: #888; /* Gris claro para fechas */
-  font-weight: bold; /* Texto resaltado */
+.hist-fecha { 
+  color: #888; /* Gris suave para la fecha */
+  font-weight: bold; /* Negrita resaltada */
+}
+
+/* --- Buscador Global --- */
+#buscador { 
+  margin-bottom: 0; /* Quita el margen inferior para que el filtro de categoría se acerque */
+  border: 2px solid #3498db; /* Borde azul resaltado */
+  background: #fdfdfd; /* Fondo casi blanco */
+}
+
+.label-input { 
+  display: block; /* En su propia línea */
+  font-size: 0.85rem; /* Texto pequeño */
+  color: #666; /* Gris intermedio */
+  margin-bottom: 5px; /* Separación con el input de abajo */
+  font-weight: bold; /* Negrita */
 }

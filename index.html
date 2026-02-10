@@ -37,6 +37,7 @@
         <nav id="sidebar" class="sidebar">
             <div class="sidebar-header">GESTIÓN DE EQUIPOS</div>
             <a href="#" onclick="showScreen('inicio')">🏠 Inventario Total</a>
+            <a href="#" onclick="showScreen('por-obra')">🏗️ Ver por Obras</a>
             <a href="#" onclick="showScreen('nuevo')">➕ Comprar Herramienta</a>
             <a href="#" onclick="showScreen('salida')">↘ Enviar a Obra</a>
             <a href="#" onclick="showScreen('regreso')">↖ Regreso de Obra</a>
@@ -47,16 +48,38 @@
 
         <div id="overlay" onclick="toggleMenu()"></div>
 
+        <!-- CAPA DE CÁMARA (Para hacer fotos dentro de la app) -->
+        <div id="camera-overlay" class="camera-overlay hidden">
+            <video id="video-stream" autoplay playsinline></video>
+            <div class="camera-controls">
+                <button onclick="capturarFoto()" class="btn-capture">📸 CAPTURAR</button>
+                <button onclick="cerrarCamara()" class="btn-close-cam">CANCELAR</button>
+            </div>
+            <canvas id="canvas-photo" class="hidden"></canvas>
+        </div>
+
         <main class="container">
-            <!-- Buscador Global -->
+            <!-- Buscador y Filtros -->
             <div id="busqueda-container" class="card hidden">
                 <input type="text" id="buscador" placeholder="🔍 Buscar herramienta..." oninput="renderizar()">
+                <div class="contenedor-filtros" id="filtros-categoria">
+                    <button class="btn-filtro active" onclick="filtrarCategoria('Todas')">Todas</button>
+                    <button class="btn-filtro" onclick="filtrarCategoria('Maquinaria')">Maquinaria</button>
+                    <button class="btn-filtro" onclick="filtrarCategoria('Manual')">Manual</button>
+                    <button class="btn-filtro" onclick="filtrarCategoria('Consumibles')">Consumibles</button>
+                    <button class="btn-filtro" onclick="filtrarCategoria('Otros')">Otros</button>
+                </div>
             </div>
 
-            <!-- Pantalla Inicio -->
+            <!-- Secciones -->
             <section id="screen-inicio" class="view">
                 <h2>📦<i> Stock y Ubicaciones</i></h2>
                 <div id="lista-total"></div>
+            </section>
+
+            <section id="screen-por-obra" class="view hidden">
+                <h2>🏗️<i> Herramientas por Obra</i></h2>
+                <div id="lista-por-obra"></div>
             </section>
 
             <!-- Pantalla Registro -->
@@ -64,19 +87,59 @@
                 <h2>➕ Nueva Compra</h2>
                 <form id="form-nuevo" class="card">
                     <input type="text" id="nombre" placeholder="Nombre (Ej: Pala)" required>
+                    <label class="label-input">Categoría:</label>
+                    <select id="categoria-nueva" class="input-select">
+                        <option value="Manual">Herramienta Manual</option>
+                        <option value="Maquinaria">Maquinaria</option>
+                        <option value="Consumibles">Consumibles</option>
+                        <option value="Otros">Otros</option>
+                    </select>
                     <input type="number" id="cantidad" placeholder="Cantidad comprada" required>
                     <input type="number" id="costo" placeholder="Costo total (€)" step="0.01">
+                    <input type="number" id="stock-minimo" placeholder="Avisar si queda menos de... (Opcional)">
+                    
+                    <label class="label-input">Foto de la Herramienta:</label>
+                    <button type="button" onclick="abrirCamara('preview-nueva')" class="btn-abrir-cam">📷 HACER FOTO AHORA</button>
+                    <div id="preview-nueva" class="container-preview-form"></div>
+                    
                     <label class="label-input">Fecha de compra:</label>
                     <input type="date" id="fecha">
                     <button type="submit" class="btn-save">Registrar Entrada</button>
                 </form>
             </section>
 
-            <!-- Pantallas de Salida y Regreso -->
+            <!-- Pantalla Editar -->
+            <section id="screen-editar" class="view hidden">
+                <h2>✏️ Editar Herramienta</h2>
+                <form id="form-editar" class="card">
+                    <input type="hidden" id="edit-index">
+                    <label class="label-input">Nombre:</label>
+                    <input type="text" id="edit-nombre" required>
+                    <label class="label-input">Categoría:</label>
+                    <select id="edit-categoria" class="input-select">
+                        <option value="Manual">Herramienta Manual</option>
+                        <option value="Maquinaria">Maquinaria</option>
+                        <option value="Consumibles">Consumibles</option>
+                        <option value="Otros">Otros</option>
+                    </select>
+                    <label class="label-input">Costo (€):</label>
+                    <input type="number" id="edit-costo" step="0.01">
+                    <label class="label-input">Stock Crítico (aviso):</label>
+                    <input type="number" id="edit-stock-minimo">
+                    
+                    <label class="label-input">Actualizar Foto:</label>
+                    <button type="button" onclick="abrirCamara('preview-editar')" class="btn-abrir-cam">📷 CAMBIAR FOTO</button>
+                    <div id="preview-editar" class="container-preview-form"></div>
+                    <button type="button" id="btn-borrar-foto-edit" onclick="eliminarFotoEdicion()" class="btn-borrar-foto-edit hidden">🗑️ Eliminar Foto Actual</button>
+                    
+                    <button type="submit" class="btn-save" style="margin-top: 15px;">Guardar Cambios</button>
+                    <button type="button" onclick="showScreen('inicio')" class="btn-borrar-hist" style="background:#6c757d; margin-top:10px">Cancelar</button>
+                </form>
+            </section>
+
             <section id="screen-salida" class="view hidden"><h2>↘ Enviar a Obra</h2><div id="lista-salida"></div></section>
             <section id="screen-regreso" class="view hidden"><h2>↖ Retorno al Almacén</h2><div id="lista-regreso"></div></section>
 
-            <!-- Pantalla Historial -->
             <section id="screen-historial" class="view hidden">
                 <h2>📜 Movimientos</h2>
                 <button onclick="borrarHistorial()" class="btn-borrar-hist">Limpiar Historial</button>
@@ -85,11 +148,9 @@
         </main>
     </div>
 
-    <!-- SCRIPTS DE FIREBASE (Versión 8 Compat) -->
+    <!-- SCRIPTS DE FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <!-- Tu Script Principal -->
     <script src="script.js"></script>
 </body>
 </html>
