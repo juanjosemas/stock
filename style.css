@@ -15,6 +15,38 @@ h2 {
   text-decoration: underline; /* Subrayado decorativo */
 }
 
+/* --- Pantalla de Login --- */
+.login-container {
+  display: flex; /* Uso de flexbox para centrar contenido */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  height: 100vh; /* Ocupa todo el alto de la pantalla */
+  background: #2c3e50; /* Fondo azul oscuro igual que la cabecera */
+  padding: 20px; /* Espaciado lateral para móviles */
+}
+
+.login-card {
+  width: 100%; /* Ancho completo */
+  max-width: 350px; /* Tamaño máximo de la tarjeta de acceso */
+  text-align: center; /* Texto centrado */
+  padding: 30px !important; /* Relleno interno extra */
+}
+
+.logo-login {
+  font-size: 2rem; /* Tamaño grande para el logo */
+  font-weight: bold; /* Texto en negrita */
+  color: #2c3e50; /* Color azul oscuro */
+  margin-bottom: 20px; /* Espacio inferior */
+  font-family: Lobster; /* Tu fuente decorativa */
+}
+
+.error-text {
+  color: #e74c3c; /* Color rojo para errores */
+  font-size: 0.9rem; /* Letra algo más pequeña */
+  margin-top: 10px; /* Espacio superior */
+  font-weight: bold; /* Resaltado */
+}
+
 /* --- Barra Superior --- */
 .top-bar { 
   background: #2c3e50; /* Azul oscuro para la cabecera */
@@ -91,11 +123,18 @@ h2 {
   border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
 }
 
-/* --- Estilo botón exportar menú --- */
+/* --- Estilo botones especiales menú --- */
 .btn-exportar-menu {
   background: #d4edda; /* Fondo verde suave */
   color: #155724 !important; /* Texto verde oscuro resaltado */
   font-weight: bold; /* Texto en negrita */
+}
+
+.btn-logout-menu {
+  background: #f8d7da; /* Fondo rojo suave para destacar */
+  color: #721c24 !important; /* Texto rojo oscuro */
+  font-weight: bold; /* Texto en negrita */
+  margin-top: 20px; /* Espacio para separarlo del resto */
 }
 
 /* --- Capa Oscura --- */

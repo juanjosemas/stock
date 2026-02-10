@@ -2,7 +2,42 @@
 let inventario = JSON.parse(localStorage.getItem('almacen_juanjo_v1')) || [];
 let historial = JSON.parse(localStorage.getItem('historial_juanjo_v1')) || [];
 
-// FUNCIÓN AUXILIAR: Convierte fecha de 2026-02-09 a 09-02-2026
+// COMPROBACIÓN INICIAL DE SESIÓN: Si ya logueó antes, entrar directo
+window.onload = function() {
+    if (localStorage.getItem('almacen_juanjo_login') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        renderizar();
+    }
+};
+
+// FUNCIÓN DE LOGIN
+window.verificarAcceso = function() {
+    const userVal = document.getElementById('user').value.trim();
+    const passVal = document.getElementById('pass').value;
+
+    // Comprobamos usuario en minúsculas para que acepte Admin, admin, ADMIN, etc.
+    if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
+        localStorage.setItem('almacen_juanjo_login', 'true'); // Guardamos la sesión
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        renderizar();
+    } else {
+        const errorMsg = document.getElementById('login-error');
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+    }
+};
+
+// FUNCIÓN CERRAR SESIÓN
+window.cerrarSesion = function() {
+    if (confirm("¿Cerrar sesión?")) {
+        localStorage.removeItem('almacen_juanjo_login'); // Borramos la sesión
+        location.reload(); // Recargamos para volver al login
+    }
+};
+
+// FUNCIÓN AUXILIAR: Formateo de fecha
 function formatearFechaVisual(fechaStr) {
     if (!fechaStr) return 's/f'; 
     const [anio, mes, dia] = fechaStr.split('-'); 
@@ -20,10 +55,12 @@ function showScreen(screenId) {
     document.getElementById('screen-' + screenId).classList.remove('hidden');
     
     const buscadorCont = document.getElementById('busqueda-container');
-    if (['inicio', 'salida', 'regreso'].includes(screenId)) {
-        buscadorCont.classList.remove('hidden');
-    } else {
-        buscadorCont.classList.add('hidden');
+    if (buscadorCont) {
+        if (['inicio', 'salida', 'regreso'].includes(screenId)) {
+            buscadorCont.classList.remove('hidden');
+        } else {
+            buscadorCont.classList.add('hidden');
+        }
     }
 
     if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
@@ -74,7 +111,7 @@ window.editarNombre = function(index) {
     }
 };
 
-// EXPORTAR A EXCEL (CSV)
+// EXPORTAR EXCEL
 window.exportarExcel = function() {
     if (inventario.length === 0) {
         alert("No hay datos para exportar.");
@@ -118,7 +155,7 @@ window.salidaObra = function(index) {
                 actualizarStorage();
                 renderizar();
             } else {
-                alert("Cantidad no válida o superior al stock.");
+                alert("Cantidad no válida.");
             }
         }
     } else {
@@ -155,6 +192,8 @@ function renderizar() {
     const lHistorial = document.getElementById('lista-historial');
     const buscador = document.getElementById('buscador');
     const filtro = buscador ? buscador.value.toLowerCase() : '';
+
+    if (!lTotal || document.getElementById('app-container').classList.contains('hidden')) return;
 
     lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = '';
 
@@ -234,5 +273,3 @@ function actualizarStorage() {
     localStorage.setItem('almacen_juanjo_v1', JSON.stringify(inventario));
     localStorage.setItem('historial_juanjo_v1', JSON.stringify(historial));
 }
-
-renderizar();
