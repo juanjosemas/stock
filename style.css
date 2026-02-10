@@ -8,6 +8,11 @@ body {
   margin: 0; /* Elimina márgenes exteriores del navegador */
   background: #f0f2f5; /* Color gris suave de fondo */
   color: #1c1e21; /* Color de texto principal */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con capa suave */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center center; /* Centra la imagen en la pantalla */
+    background-attachment: fixed; /* La imagen se queda quieta al hacer scroll */
+    background-size: cover; /* La imagen cubre todo el ancho y alto disponible */
 }
 
 h2 {
