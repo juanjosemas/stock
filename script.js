@@ -80,11 +80,7 @@ window.exportarExcel = function() {
         alert("No hay datos para exportar.");
         return;
     }
-
-    // Cabecera del archivo (Usamos punto y coma para que Excel España lo reconozca como columnas)
     let csvContent = "Nombre;Costo (€);Fecha Compra;Ubicacion;Cantidad\n";
-
-    // Recorremos el inventario y sus ubicaciones
     inventario.forEach(item => {
         for (let loc in item.ubicaciones) {
             let cant = item.ubicaciones[loc];
@@ -93,48 +89,61 @@ window.exportarExcel = function() {
             }
         }
     });
-
-    // Creamos el archivo con codificación UTF-8 para tildes y Ñ
     const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
-    // Crear enlace invisible para descargar
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", `Inventario_Almacen_${new Date().toLocaleDateString()}.csv`);
     document.body.appendChild(link);
-    
-    link.click(); // Disparar descarga
-    document.body.removeChild(link); // Limpiar
+    link.click();
+    document.body.removeChild(link);
 };
 
-// SALIDA A OBRA
+// SALIDA A OBRA (Modificado para pedir cantidad)
 window.salidaObra = function(index) {
     let item = inventario[index];
-    if (item.ubicaciones["Almacén"] > 0) {
-        const obraDestino = prompt("¿A qué obra envías 1 unidad de " + item.nombre + "?");
+    let cantEnAlmacen = item.ubicaciones["Almacén"];
+
+    if (cantEnAlmacen > 0) {
+        const obraDestino = prompt("¿A qué obra envías " + item.nombre + "?");
         if (obraDestino) {
-            item.ubicaciones["Almacén"]--;
-            if (!item.ubicaciones[obraDestino]) item.ubicaciones[obraDestino] = 0;
-            item.ubicaciones[obraDestino]++;
-            anotarHistorial(item.nombre, `Enviado a ${obraDestino}`);
-            actualizarStorage();
-            renderizar();
+            let cantEnviar = prompt(`¿Cuántas unidades envías a ${obraDestino}? (Máximo: ${cantEnAlmacen})`, "1");
+            cantEnviar = parseInt(cantEnviar);
+
+            if (!isNaN(cantEnviar) && cantEnviar > 0 && cantEnviar <= cantEnAlmacen) {
+                item.ubicaciones["Almacén"] -= cantEnviar;
+                if (!item.ubicaciones[obraDestino]) item.ubicaciones[obraDestino] = 0;
+                item.ubicaciones[obraDestino] += cantEnviar;
+                anotarHistorial(item.nombre, `Enviado a ${obraDestino}: ${cantEnviar} un.`);
+                actualizarStorage();
+                renderizar();
+            } else {
+                alert("Cantidad no válida o superior al stock.");
+            }
         }
     } else {
         alert("No queda stock en Almacén.");
     }
 };
 
-// REGRESO RÁPIDO
+// REGRESO RÁPIDO (Modificado para pedir cantidad)
 window.regresoRapido = function(index, nombreObra) {
     let item = inventario[index];
-    if (item.ubicaciones[nombreObra] > 0) {
-        item.ubicaciones[nombreObra]--;
-        item.ubicaciones["Almacén"]++;
-        anotarHistorial(item.nombre, `Regresó de ${nombreObra}`);
-        actualizarStorage();
-        renderizar();
+    let cantEnObra = item.ubicaciones[nombreObra];
+
+    if (cantEnObra > 0) {
+        let cantRegreso = prompt(`¿Cuántas unidades regresan de ${nombreObra}? (Máximo: ${cantEnObra})`, "1");
+        cantRegreso = parseInt(cantRegreso);
+
+        if (!isNaN(cantRegreso) && cantRegreso > 0 && cantRegreso <= cantEnObra) {
+            item.ubicaciones[nombreObra] -= cantRegreso;
+            item.ubicaciones["Almacén"] += cantRegreso;
+            anotarHistorial(item.nombre, `Regresó de ${nombreObra}: ${cantRegreso} un.`);
+            actualizarStorage();
+            renderizar();
+        } else {
+            alert("Cantidad no válida.");
+        }
     }
 };
 
