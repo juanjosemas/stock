@@ -1,4 +1,4 @@
-// CONFIGURACIÓN DE TU PROYECTO FIREBASE (Obtenida de tu foto)
+// CONFIGURACIÓN DE TU PROYECTO FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyD3BA__Bl9Ao1g4P9F6WUR93uEatnUKsNk",
     authDomain: "stock-almacen-b9af8.firebaseapp.com",
@@ -17,17 +17,17 @@ const db = firebase.database();
 let inventario = [];
 let historial = [];
 
-// ESCUCHADOR DE DATOS: Cuando algo cambie en la nube, se actualiza tu app solo
+// ESCUCHADOR DE DATOS: Sincronización en tiempo real
 db.ref('/').on('value', (snapshot) => {
     const data = snapshot.val();
     if (data) {
         inventario = data.inventario || [];
         historial = data.historial || [];
-        renderizar(); // Volvemos a dibujar todo con los datos nuevos
+        renderizar(); 
     }
 });
 
-// COMPROBACIÓN INICIAL DE SESIÓN (Persiste en el móvil)
+// COMPROBACIÓN INICIAL DE SESIÓN
 window.onload = function() {
     if (localStorage.getItem('almacen_juanjo_login') === 'true') {
         document.getElementById('login-screen').classList.add('hidden');
@@ -35,7 +35,7 @@ window.onload = function() {
     }
 };
 
-// FUNCIÓN DE LOGIN (Sin cambios, admin/admin123)
+// LOGIN (admin/admin123)
 window.verificarAcceso = function() {
     const userVal = document.getElementById('user').value.trim();
     const passVal = document.getElementById('pass').value;
@@ -60,7 +60,7 @@ window.cerrarSesion = function() {
     }
 };
 
-// GUARDAR NUEVA HERRAMIENTA O JUNTAR STOCK EN LA NUBE
+// GUARDAR O ACTUALIZAR STOCK
 document.getElementById('form-nuevo').addEventListener('submit', function(e) {
     e.preventDefault();
     const nombreInput = document.getElementById('nombre').value.trim();
@@ -87,7 +87,7 @@ document.getElementById('form-nuevo').addEventListener('submit', function(e) {
         anotarHistorial(nombreInput, `Nueva compra: ${cantNueva} un.`);
     }
     
-    actualizarFirebase(); // Guardamos en la nube
+    actualizarFirebase();
     this.reset();
     showScreen('inicio');
 });
@@ -147,7 +147,7 @@ window.regresoRapido = function(index, nombreObra) {
     }
 };
 
-// ELIMINAR HERRAMIENTA
+// ELIMINAR
 window.eliminar = function(index) {
     if(confirm("¿Borrar definitivamente de la nube?")) {
         inventario.splice(index, 1);
@@ -155,7 +155,7 @@ window.eliminar = function(index) {
     }
 };
 
-// LIMPIAR HISTORIAL
+// BORRAR HISTORIAL
 window.borrarHistorial = function() {
     if(confirm("¿Limpiar historial de la nube?")) {
         historial = [];
@@ -163,7 +163,7 @@ window.borrarHistorial = function() {
     }
 };
 
-// FUNCION PARA SUBIR TODO A FIREBASE
+// ACTUALIZAR FIREBASE
 function actualizarFirebase() {
     db.ref('/').set({
         inventario: inventario,
@@ -176,23 +176,26 @@ function anotarHistorial(nombre, accion) {
     if (historial.length > 50) historial.pop();
 }
 
-// FUNCIONES VISUALES (Se mantienen igual)
+// FORMATEAR FECHA
 function formatearFechaVisual(fechaStr) {
     if (!fechaStr) return 's/f'; 
     const [anio, mes, dia] = fechaStr.split('-'); 
     return `${dia}-${mes}-${anio}`; 
 }
 
+// MENÚ
 function toggleMenu() {
     document.getElementById('sidebar').classList.toggle('active');
     document.getElementById('overlay').classList.toggle('active');
 }
 
+// CAMBIAR PANTALLA
 function showScreen(screenId) {
     document.querySelectorAll('.view').forEach(s => s.classList.add('hidden'));
     document.getElementById('screen-' + screenId).classList.remove('hidden');
     const buscadorCont = document.getElementById('busqueda-container');
     if (buscadorCont) {
+        // Mostramos el buscador en Inicio, Salida y Regreso
         if (['inicio', 'salida', 'regreso'].includes(screenId)) buscadorCont.classList.remove('hidden');
         else buscadorCont.classList.add('hidden');
     }
@@ -200,6 +203,7 @@ function showScreen(screenId) {
     renderizar();
 }
 
+// DIBUJAR LISTAS
 function renderizar() {
     const lTotal = document.getElementById('lista-total');
     const lSalida = document.getElementById('lista-salida');
@@ -232,9 +236,21 @@ function renderizar() {
             }
         }
 
+        // Definimos el botón pequeño para la sección de salida
         const btnSalidaHTML = `<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button>`;
 
-        const cardHTML = `
+        // Card para Inventario Total (SIN botón de enviar)
+        const cardTotalHTML = `
+            <div class="item-card">
+                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
+                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
+                ${badgesHTML}
+                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
+            </div>
+        `;
+
+        // Card para Salida (CON botón de enviar)
+        const cardSalidaHTML = `
             <div class="item-card">
                 <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
                 ${btnSalidaHTML}
@@ -244,6 +260,7 @@ function renderizar() {
             </div>
         `;
 
+        // Card para Regreso
         const cardRegresoHTML = `
             <div class="item-card">
                 <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
@@ -253,8 +270,8 @@ function renderizar() {
             </div>
         `;
         
-        lTotal.innerHTML += cardHTML;
-        lSalida.innerHTML += cardHTML;
+        lTotal.innerHTML += cardTotalHTML;
+        lSalida.innerHTML += cardSalidaHTML;
         lRegreso.innerHTML += cardRegresoHTML; 
     });
 
