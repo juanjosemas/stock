@@ -1,334 +1,251 @@
-/* --- General --- */
-* { 
-  box-sizing: border-box; /* El ancho incluye el relleno y el borde para que no desborde */
+:root { /* Definición de variables globales para colores principales */
+    --primary: #1a73e8; /* Color azul para botones y cabecera */
+    --success: #00c853; /* Color verde para entradas exitosas */
+    --danger: #d32f2f; /* Color rojo para salidas o errores */
+    --dark: #202124; /* Color gris oscuro para el menú lateral */
+    --bg: #f8f9fa; /* Color gris muy claro para el fondo de reserva */
 }
 
-body { 
-  font-family: 'Segoe UI', sans-serif; /* Fuente base de la aplicación */
-  margin: 0; /* Elimina márgenes exteriores del navegador */
-  background: #f0f2f5; /* Color gris suave de fondo */
-  color: #1c1e21; /* Color de texto principal */
+body { /* Estilo para el cuerpo del documento */
+    font-family: -apple-system, sans-serif; /* Fuente del sistema móvil */
+    margin: 0; /* Elimina el margen externo */
+    background-color: var(--bg); /* Aplica el color de fondo de reserva */
+    color: var(--dark); /* Establece el color de texto oscuro */
+    overflow-x: hidden; /* Evita el desplazamiento horizontal */
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con capa suave */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center center; /* Centra la imagen en la pantalla */
+    background-attachment: fixed; /* La imagen se queda quieta al hacer scroll */
+    background-size: cover; /* La imagen cubre todo el ancho y alto disponible */
 }
 
-h2 {
-  font-family: Lobster; /* Fuente decorativa para títulos */
-  text-decoration: underline; /* Subrayado decorativo */
+header { /* Estilo de la barra superior */
+    background: rgba(26, 115, 232, 0.6); /* Fondo azul con transparencia para ver el fondo */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque detrás de la barra */
+    -webkit-backdrop-filter: blur(10px); /* Soporte de desenfoque para iPhone/Safari */
+    color: white; /* Color de texto blanco */
+    height: 55px; /* Altura reducida de la barra de navegación para ganar espacio */
+    display: flex; /* Activa el diseño flexible */
+    justify-content: space-between; /* Separa los elementos a los lados */
+    align-items: center; /* Centra los elementos verticalmente */
+    padding: 0 15px; /* Relleno lateral interno */
+    position: sticky; /* Se queda fijo en la parte superior */
+    top: 0; /* Posición inicial superior */
+    z-index: 100; /* Asegura que esté por encima de las tarjetas */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Borde inferior sutil */
 }
 
-/* --- Pantalla de Login --- */
-.login-container {
-  display: flex; /* Uso de flexbox para centrar contenido */
-  justify-content: center; /* Centrado horizontal */
-  align-items: center; /* Centrado vertical */
-  height: 100vh; /* Ocupa todo el alto de la pantalla */
-  background: #2c3e50; /* Fondo azul oscuro igual que la cabecera */
-  padding: 20px; /* Espaciado lateral para móviles */
+#header-title { /* Título principal de la cabecera */
+    flex-grow: 1; /* Ocupa el espacio central */
+    text-align: center; /* Centra el texto */
+    font-size: 1.6rem; /* Tamaño de letra ligeramente reducido */
+    margin: 0; /* Sin márgenes externos */
+    font-family: Lobster; /* Fuente decorativa Lobster */
+    font-style: italic; /* Texto en cursiva */
+    text-decoration: underline; /* Texto subrayado */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Sombra para resaltar sobre el fondo */
 }
 
-.login-card {
-  width: 100%; /* Ancho completo */
-  max-width: 350px; /* Tamaño máximo de la tarjeta de acceso */
-  text-align: center; /* Texto centrado */
-  padding: 30px !important; /* Relleno interno extra */
+h2 { /* Estilos para títulos secundarios */
+    font-family: Piedra; /* Fuente Piedra */
+    font-style: italic; /* Cursiva */
+    text-align: center; /* Centrado */
+    margin: 10px 0; /* Margen vertical reducido */
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8); /* Sombra blanca */
 }
 
-.logo-login {
-  font-size: 2rem; /* Tamaño grande para el logo */
-  font-weight: bold; /* Texto en negrita */
-  color: #2c3e50; /* Color azul oscuro */
-  margin-bottom: 20px; /* Espacio inferior */
-  font-family: Lobster; /* Tu fuente decorativa */
+h3 { /* Estilos para títulos dentro de las cajas */
+    font-family: Lobster; /* Fuente Lobster */
+    font-style: italic; /* Cursiva */
+    text-align: center; /* Centrado */
+    font-size: 1.3rem; /* Tamaño de letra reducido para compactar la caja */
+    margin: 5px 0 10px 0; /* Margen ajustado: 5px arriba, 10px abajo */
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8); /* Sombra blanca */
 }
 
-.error-text {
-  color: #e74c3c; /* Color rojo para errores */
-  font-size: 0.9rem; /* Letra algo más pequeña */
-  margin-top: 10px; /* Espacio superior */
-  font-weight: bold; /* Resaltado */
+.view { /* Contenedor de cada pantalla de la app */
+    display: none; /* Oculta la pantalla por defecto */
+    padding: 10px; /* Margen interno reducido */
+    text-align: center; /* Centra el contenido interior */
 }
 
-/* --- Barra Superior --- */
-.top-bar { 
-  background: #2c3e50; /* Azul oscuro para la cabecera */
-  color: white; /* Texto en blanco */
-  height: 60px; /* Altura fija de la barra */
-  display: flex; /* Alineación flexible de elementos */
-  align-items: center; /* Centrado vertical de logo e icono */
-  padding: 0 15px; /* Espaciado a los lados */
-  position: sticky; /* Se queda pegada arriba al hacer scroll */
-  top: 0; /* Posición cero respecto al techo */
-  z-index: 100; /* Prioridad de visualización sobre el contenido */
+.view.active { /* Clase que se aplica a la pantalla visible */
+    display: block; /* Muestra la pantalla cuando está activa */
 }
 
-.menu-trigger { 
-  font-size: 24px; /* Tamaño del icono hamburguesa */
-  cursor: pointer; /* Cambia el puntero al pasar por encima */
-  margin-right: 15px; /* Separación con el logo */
+.card { /* Tarjeta de contenido estilo cristal compacta */
+    background: rgba(255, 255, 255, 0.1); /* Transparencia de 0.1 mantenida */
+    backdrop-filter: blur(12px); /* Desenfoque de fondo */
+    -webkit-backdrop-filter: blur(12px); /* Soporte Safari */
+    padding: 10px; /* Relleno interno reducido */
+    border-radius: 12px; /* Redondeado de las esquinas */
+    margin-bottom: 10px; /* Separación reducida entre tarjetas */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra de profundidad */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Borde blanco muy fino */
+    position: relative; /* Contexto de capas */
+    z-index: 1; /* Capa base de contenido */
 }
 
-.logo { 
-  font-weight: bold; /* Logo resaltado en negrita */
-  font-size: 1.2rem; /* Tamaño de letra del logo */
-  white-space: nowrap; /* Evita que el nombre se rompa en varias líneas */
+.filter-row { /* Fila para los selectores de mes */
+    display: flex; /* Diseño en línea */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    gap: 8px; /* Espacio entre elementos reducido */
+    margin-bottom: 8px; /* Margen inferior reducido */
+    background: rgba(255,255,255,0.2); /* Fondo sutil */
+    padding: 6px; /* Relleno interno más pequeño */
+    border-radius: 8px; /* Redondeado */
 }
 
-.ico { 
-  border-radius: 50%; /* Forma circular para la imagen */
-  margin: 8px 8px 8px 80px; /* Margen para posicionarla a la derecha */
-  animation: logo 3s ease-in-out; /* Aplica la animación definida abajo */
-  background-color: black; /* Fondo negro tras la imagen */
-  border: 2px solid red; /* Borde rojo circular */
-  vertical-align: middle; /* Alineación vertical con el texto */
+.logo-icon { /* Icono del reloj en login */
+    font-size: 3.5rem; /* Tamaño un poco más pequeño que antes */
+    margin-bottom: 5px; /* Separación inferior mínima */
+    display: block; /* Ocupa su propia línea */
 }
 
-@keyframes logo { 
-  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Inicia invisible, pequeña y sin rotar */
-  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina visible, tamaño real y dando 4 vueltas */
+input { /* Estilo de los campos de escritura */
+    width: 100%; /* Ocupa todo el ancho */
+    padding: 12px; /* Relleno ligeramente reducido */
+    margin: 6px 0; /* Separación vertical */
+    border: 1px solid rgba(0,0,0,0.1); /* Borde sutil */
+    border-radius: 8px; /* Redondeado */
+    box-sizing: border-box; /* Incluye el padding en el ancho */
+    font-size: 1rem; /* Tamaño de letra estándar */
+    font-family: Sriracha; /* Fuente manuscrita */
+    background: rgba(255, 255, 255, 0.9); /* Casi blanco opaco para visibilidad */
+    color: #000; /* Texto negro */
+    position: relative; /* Contexto relativo */
+    z-index: 10; /* Por encima de desenfoques */
 }
 
-/* --- Menú Lateral --- */
-.sidebar { 
-  position: fixed; /* Menú flotante fijo */
-  left: -250px; /* Escondido por defecto a la izquierda */
-  top: 0; /* Alineado al techo */
-  width: 200px; /* Ancho del menú desplegable */
-  height: 100%; /* Ocupa todo el alto de la pantalla */
-  background: #fff; /* Fondo blanco para las opciones */
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra derecha para profundidad */
-  transition: 0.3s; /* Velocidad de la animación al abrirse */
-  z-index: 200; /* Por encima de la barra superior */
-  padding-top: 20px; /* Espacio superior interno */
-  font-style: italic; /* Estilo de fuente cursiva */
-  font-family: Sriracha; /* Fuente personalizada */
+input:focus { /* Al escribir en el campo */
+    background: #ffffff; /* Blanco sólido */
+    outline: none; /* Quita borde de sistema */
+    border-color: var(--primary); /* Borde azul */
+    box-shadow: 0 0 8px rgba(26, 115, 232, 0.3); /* Resplandor sutil */
 }
 
-.sidebar.active { 
-  left: 0; /* Posición visible al activarse */
+button { /* Estilo base de los botones */
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Relleno reducido */
+    border: none; /* Sin bordes */
+    border-radius: 8px; /* Redondeado */
+    font-weight: bold; /* Negrita */
+    cursor: pointer; /* Mano al pasar */
 }
 
-.sidebar-header { 
-  padding: 15px; /* Relleno interno */
-  font-weight: bold; /* Texto en negrita */
-  border-bottom: 1px solid #eee; /* Línea divisoria inferior */
-  margin-bottom: 10px; /* Espacio antes de los enlaces */
-  color: #2c3e50; /* Color azul para el título */
-  text-align: center; /* Texto centrado */
-  font-family: Piedra; /* Tu fuente personalizada para el título */
+.btn-main { /* Botón azul principal */
+    background-color: rgba(26, 115, 232, 0.85); /* Azul translúcido */
+    color: white; /* Letra blanca */
+    font-family: Piedra; /* Fuente Piedra */
+    font-size: 1.2rem; /* Tamaño ligeramente reducido */
 }
 
-.sidebar a { 
-  display: block; /* Cada enlace ocupa toda la línea */
-  padding: 15px; /* Espacio grande para facilitar el toque táctil */
-  color: #333; /* Color de texto de los enlaces */
-  text-decoration: none; /* Quita el subrayado por defecto */
-  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
+.btn-punch { /* Botones de fichaje ahora más pequeños */
+    font-size: 1.1rem; /* Letra un poco más pequeña */
+    padding: 16px; /* Altura reducida */
+    margin: 8px 0; /* Margen vertical reducido */
 }
 
-/* --- Estilo botones especiales menú --- */
-.btn-exportar-menu {
-  background: #d4edda; /* Fondo verde suave */
-  color: #155724 !important; /* Texto verde oscuro resaltado */
-  font-weight: bold; /* Texto en negrita */
+.btn-success { /* Botón verde para entradas */
+    background-color: var(--success); /* Color éxito */
+    color: white; /* Texto blanco */
 }
 
-.btn-logout-menu {
-  background: #f8d7da; /* Fondo rojo suave para destacar */
-  color: #721c24 !important; /* Texto rojo oscuro */
-  font-weight: bold; /* Texto en negrita */
-  margin-top: 20px; /* Espacio para separarlo del resto */
+.btn-danger { /* Botón rojo para salidas */
+    background-color: var(--danger); /* Color peligro */
+    color: white; /* Texto blanco */
 }
 
-/* --- Capa Oscura --- */
-#overlay { 
-  display: none; /* Oculta por defecto */
-  position: fixed; /* Cubre toda la pantalla */
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background: rgba(0,0,0,0.5); /* Color negro con transparencia */
-  z-index: 150; 
+.btn-secondary { /* Botón gris neutro */
+    background-color: #6c757d; /* Color gris */
+    color: white; /* Texto blanco */
 }
 
-#overlay.active { 
-  display: block; /* Visible cuando el menú está abierto */
+.badge { /* Etiqueta de estado del empleado */
+    display: inline-block; /* Se adapta al texto */
+    padding: 4px 12px; /* Relleno interno reducido */
+    border-radius: 20px; /* Forma de pastilla */
+    color: white; /* Texto blanco */
+    font-weight: bold; /* Negrita */
+    font-size: 0.8rem; /* Letra pequeña */
 }
 
-/* --- Contenedores y Tarjetas --- */
-.container { 
-  padding: 15px; /* Espaciado interno del contenedor principal */
+.user-row { /* Filas de las listas de registros */
+    display: flex; /* Activa flexbox */
+    flex-direction: column; /* Apila los datos verticalmente */
+    background: rgba(255,255,255,0.25); /* Fondo suave */
+    padding: 8px 10px; /* Relleno reducido */
+    border-radius: 8px; /* Redondeado */
+    margin-bottom: 6px; /* Separación entre filas reducida */
+    text-align: left; /* Alinea el texto a la izquierda */
+    border: 1px solid rgba(255,255,255,0.1); /* Borde sutil */
 }
 
-.view { 
-  animation: fadeIn 0.3s; /* Animación de aparición suave */
+.btn-user-select { /* Botones para elegir empleado */
+    background: rgba(255, 255, 255, 0.4); /* Blanco suave */
+    color: var(--dark); /* Texto oscuro */
+    margin-bottom: 6px; /* Separación reducida */
+    text-align: left; /* Alineado izquierda */
+    padding: 10px; /* Relleno reducido */
+    font-family: Sriracha; /* Fuente manuscrita */
 }
 
-.hidden { 
-  display: none; /* Oculta elementos que no deben verse */
+.btn-small { /* Botones pequeños como borrar/editar */
+    width: auto; /* Ancho automático */
+    padding: 4px 8px; /* Relleno mínimo */
+    font-size: 0.7rem; /* Letra mínima */
+    margin-left: 4px; /* Separación mínima */
 }
 
-@keyframes fadeIn { 
-  from { opacity: 0; } /* Inicia totalmente transparente */
-  to { opacity: 1; } /* Termina totalmente opaco */
+.ico { /* Imagen del logo circular */
+    border-radius: 50%; /* Forma circular */
+    margin: 8px 8px 8px -10px; /* Márgenes ajustados */
+    animation: logo 3s ease-in-out; /* Animación de rotación */
+    background-color: black; /* Fondo negro */
+    border: 2px solid red; /* Borde rojo */
+    vertical-align: middle; /* Centrado vertical */
 }
 
-.card { 
-  background: white; /* Fondo blanco para tarjetas */
-  padding: 12px; /* Espaciado interno */
-  border-radius: 8px; /* Bordes redondeados */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave inferior */
-  margin-bottom: 15px; /* Separación entre tarjetas */
+@keyframes logo { /* Definición animación rotación */
+    from { opacity: 0; transform: scale(0.5) rotate(0deg); }
+    to { opacity: 1; transform: scale(1) rotate(1440deg); }
 }
 
-input { 
-  width: 100%; /* Ocupa todo el ancho disponible */
-  padding: 12px; /* Relleno para que sea fácil escribir */
-  margin-bottom: 10px; /* Separación con el siguiente input */
-  border: 1px solid #ddd; /* Borde gris claro */
-  border-radius: 6px; /* Redondeo de esquinas */
-  font-size: 16px; /* Tamaño de letra legible */
+.sidebar { /* Menú lateral oculto */
+    position: fixed; /* Fijo */
+    left: -280px; /* Fuera a la izquierda */
+    top: 0; /* Arriba */
+    width: 280px; /* Ancho */
+    height: 100%; /* Todo el alto */
+    background: var(--dark); /* Gris oscuro */
+    color: white; /* Letra blanca */
+    transition: 0.3s ease; /* Movimiento suave */
+    z-index: 1001; /* Sobre todo el contenido */
+    visibility: hidden; /* Evita clics invisibles */
 }
 
-/* --- Buscador Específico --- */
-#buscador {
-  margin-bottom: 0; /* Quita el margen inferior dentro de su card */
-  border: 2px solid #3498db; /* Borde azul para resaltarlo */
-  background: #fdfdfd; /* Fondo casi blanco */
+.sidebar.active { /* Sidebar visible */
+    left: 0; /* Posición 0 */
+    visibility: visible; /* Se hace presente */
 }
 
-.label-input {
-  display: block; /* Ocupa su propia línea */
-  font-size: 0.85rem; /* Letra pequeña para la etiqueta */
-  color: #666; /* Gris oscuro */
-  margin-bottom: 5px; /* Espacio con el input inferior */
-  font-weight: bold; /* Texto resaltado */
+#overlay { /* Sombra negra al abrir menú */
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Fijo */
+    top: 0; /* Arriba */
+    left: 0; /* Izquierda */
+    width: 100%; /* Todo el ancho */
+    height: 100%; /* Todo el alto */
+    background: rgba(0,0,0,0.5); /* Color negro transparente */
+    z-index: 1000; /* Bajo el sidebar */
 }
 
-.btn-save { 
-  width: 100%; /* Botón de ancho completo */
-  background: #28a745; /* Color verde de éxito */
-  color: white; /* Letras blancas */
-  border: none; /* Sin borde */
-  padding: 15px; /* Relleno generoso para pulsar */
-  border-radius: 6px; /* Bordes redondeados */
-  font-weight: bold; /* Texto resaltado */
-}
-
-/* --- Tarjetas de Inventario --- */
-.item-card { 
-  background: white; /* Fondo blanco */
-  padding: 12px; /* Espacio interno compacto */
-  border-radius: 10px; /* Esquinas redondeadas */
-  margin-bottom: 10px; /* Separación entre tarjetas */
-  border-left: 6px solid #3498db; /* Barra azul lateral distintiva */
-  position: relative; /* Para posicionar elementos internos */
-}
-
-.item-nombre { 
-  font-weight: bold; /* Nombre en negrita */
-  font-size: 1.1rem; /* Tamaño de letra un poco más grande */
-  display: inline-block; /* Permite elementos al lado */
-  margin-right: 10px; /* Separación con el botón */
-  cursor: pointer; /* Indica que se puede interactuar */
-  border-bottom: 1px dashed transparent; /* Preparado para el hover */
-  transition: 0.2s; /* Animación suave */
-}
-
-.item-nombre:hover {
-  color: #3498db; /* Cambia a azul al pasar el ratón */
-  border-bottom: 1px dashed #3498db; /* Muestra subrayado discontinuo */
-}
-
-.info-stock {
-  font-size: 0.8rem; /* Tamaño algo más pequeño */
-  color: #666; /* Color gris para menos énfasis */
-  margin: 5px 0; /* Separación vertical */
-}
-
-.badge-obra { 
-  display: inline-block; /* Se ajusta al contenido */
-  background: #fff3cd; /* Fondo amarillo claro */
-  color: #856404; /* Texto marrón oscuro */
-  padding: 3px 8px; /* Relleno compacto */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 0.75rem; /* Letra pequeña */
-  margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral */
-  border: 1px solid #ffeeba; /* Borde amarillo suave */
-}
-
-.badge-almacen { 
-  display: inline-block; /* Se ajusta al contenido */
-  background: #d4edda; /* Fondo verde claro */
-  color: #155724; /* Texto verde oscuro */
-  padding: 3px 8px; /* Relleno compacto */
-  border-radius: 5px; /* Bordes redondeados */
-  font-size: 0.75rem; /* Letra pequeña */
-  margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral */
-  border: 1px solid #c3e6cb; /* Borde verde suave */
-}
-
-.fila-regreso {
-  display: flex; /* Alinea badge y botón */
-  align-items: center; /* Centrado vertical */
-  gap: 8px; /* Espacio entre elementos */
-  margin-top: 4px; /* Separación superior */
-}
-
-.btn-mini-regreso {
-  background: #3498db; /* Azul */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  padding: 3px 6px; /* Relleno compacto */
-  border-radius: 4px; /* Bordes redondeados */
-  font-size: 0.7rem; /* Letra muy pequeña */
-  font-weight: bold; /* Texto resaltado */
-}
-
-.btn-enviar-peque {
-  background: #e74c3c; /* Rojo */
-  color: white; /* Texto blanco */
-  border: none; /* Sin borde */
-  padding: 4px 10px; /* Relleno compacto */
-  border-radius: 15px; /* Forma de píldora */
-  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
-  font-weight: bold; /* Texto resaltado */
-  vertical-align: middle; /* Alineación vertical */
-  font-style: italic; /* Estilo cursiva según tu cambio */
-}
-
-.btn-borrar { 
-  background: #eee; /* Gris muy claro */
-  color: #888; /* Texto gris suave */
-  position: absolute; /* Posición absoluta */
-  right: 8px; /* Distancia derecha */
-  top: 8px; /* Distancia superior */
-  padding: 3px 6px; /* Relleno compacto */
-  font-size: 0.80rem; /* Tamaño de letra según tu cambio */
-  border: none; /* Sin borde */
-  border-radius: 5px; /* Bordes redondeados */
-  font-family: Sriracha; /* Fuente personalizada según tu cambio */
-}
-
-.btn-borrar-hist { 
-  width: 100%; /* Ancho total */
-  background: #6c757d; /* Gris para historial */
-  color: white; /* Texto blanco */
-  padding: 10px; /* Relleno interno */
-  border-radius: 5px; /* Bordes redondeados */
-  margin-bottom: 15px; /* Margen inferior */
-  border: none; /* Sin borde */
-}
-
-.hist-item { 
-  background: white; /* Fondo blanco */
-  padding: 10px; /* Relleno interno */
-  border-bottom: 1px solid #eee; /* Separador inferior */
-  font-size: 0.85rem; /* Letra pequeña */
-}
-
-.hist-fecha {
-  color: #888; /* Gris claro para fechas */
-  font-weight: bold; /* Texto resaltado */
+.sidebar-nav a { /* Enlaces del menú lateral */
+    color: #e8eaed; /* Gris claro */
+    padding: 12px 20px; /* Área de toque ajustada */
+    text-decoration: none; /* Quita subrayado */
+    display: block; /* Ocupa toda la fila */
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* Separador sutil */
+    font-family: Piedra; /* Fuente decorativa */
 }
