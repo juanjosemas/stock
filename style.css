@@ -91,6 +91,13 @@ h2 {
   border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
 }
 
+/* --- Estilo botón exportar menú --- */
+.btn-exportar-menu {
+  background: #d4edda; /* Fondo verde suave */
+  color: #155724 !important; /* Texto verde oscuro resaltado */
+  font-weight: bold; /* Texto en negrita */
+}
+
 /* --- Capa Oscura --- */
 #overlay { 
   display: none; /* Oculta por defecto */
