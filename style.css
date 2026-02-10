@@ -69,11 +69,12 @@ h2 {
 .logo { 
   font-weight: bold; /* Logo resaltado en negrita */
   font-size: 1.2rem; /* Tamaño de letra del logo */
+  white-space: nowrap; /* Evita que el nombre se rompa en varias líneas */
 }
 
 .ico { 
   border-radius: 50%; /* Forma circular para la imagen */
-  margin: 8px 8px 8px 120px; /* Margen para posicionarla a la derecha */
+  margin: 8px 8px 8px 80px; /* Margen para posicionarla a la derecha */
   animation: logo 3s ease-in-out; /* Aplica la animación definida abajo */
   background-color: black; /* Fondo negro tras la imagen */
   border: 2px solid red; /* Borde rojo circular */
