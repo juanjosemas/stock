@@ -2,136 +2,94 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Horario Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control de Almacén Pro</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Librería Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Librerías Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&family=Amatic+SC:wght@700&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Lobster&family=Metal+Mania&family=Yellowtail&family=Permanent+Marker&family=Piedra&family=Sriracha&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <h2 id="menu-user-name">Usuario</h2>
-            <p id="menu-user-role">rol</p>
+    <!-- Pantalla de Inicio de Sesión -->
+    <section id="login-screen" class="login-container">
+        <div class="card login-card">
+            <div class="logo-login">🏗️ Almacén Eco Struct</div>
+            <h2>Identifícate</h2>
+            <input type="text" id="user" placeholder="Usuario">
+            <input type="password" id="pass" placeholder="Contraseña">
+            <button onclick="verificarAcceso()" class="btn-save">Entrar</button>
+            <p id="login-error" class="hidden error-text">Datos incorrectos</p>
         </div>
-        <nav class="sidebar-nav">
-            <a href="#" onclick="app.nav('view-home')">🏠 Inicio</a>
-            <a href="#" onclick="app.nav('view-employee')">⏱️ Fichar ahora</a>
-            <div id="admin-only-menu">
-                <hr>
-                <a href="#" onclick="app.nav('view-admin-status')">🟢 Estado en vivo</a>
-                <a href="#" onclick="app.nav('view-admin-employees')">👥 Gestionar empleados</a>
-                <a href="#" onclick="app.nav('view-admin-by-employee')">📂 Registros por empleado</a>
-                <a href="#" onclick="app.nav('view-admin-logs')">📋 Historial completo</a>
-                <hr>
-                <a href="#" onclick="app.downloadBackup()">💾 Guardar Copia</a>
-                <a href="#" onclick="document.getElementById('import-file').click()">📂 Restaurar Copia</a>
-                <input type="file" id="import-file" style="display:none" onchange="app.importBackup(event)">
-                <a href="#" onclick="app.generateExcel()">📊 Exportar Excel</a>
-            </div>
-            <hr>
-            <a href="#" onclick="app.logout()" class="logout-link">🚪 Cerrar sesión</a>
-        </nav>
-    </div>
+    </section>
 
-    <div id="overlay" onclick="app.toggleMenu()"></div>
-
-    <div class="app-container">
-        <header>
-            <div class="header-side"><button id="menu-btn" onclick="app.toggleMenu()" style="display:none;">☰</button></div>
-            <h1 id="header-title">Control Horario</h1>
+    <!-- Contenedor Principal de la Aplicación -->
+    <div id="app-container" class="hidden">
+        <!-- Barra Superior -->
+        <header class="top-bar">
+            <div class="menu-trigger" onclick="toggleMenu()">&#9776;</div>
+            <div class="logo">🏗️ <i>Almacén Eco Struct</i></div>
+            
             <div class="header-side"></div>
             <h2><u><i><img src="img/Juanjo.ico" class="ico" width="35"></i></u></h2>
+            
+            <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&family=Amatic+SC:wght@700&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Lobster&family=Metal+Mania&family=Yellowtail&family=Permanent+Marker&family=Piedra&family=Sriracha&display=swap" rel="stylesheet">
         </header>
 
-        <!-- LOGIN -->
-        <section id="view-login" class="view active">
-            <div class="card">
-                <div class="logo-icon">🕒</div>
-                <h2>Identificación</h2>
-                <input type="text" id="login-user" placeholder="usuario" autocapitalize="none">
-                <input type="password" id="login-pass" placeholder="contraseña">
-                <button class="btn-main" onclick="app.login()">Entrar</button>
-            </div>
-        </section>
+        <!-- Menú Lateral -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">GESTIÓN DE EQUIPOS</div>
+            <a href="#" onclick="showScreen('inicio')">🏠 Inventario Total</a>
+            <a href="#" onclick="showScreen('nuevo')">➕ Comprar Herramienta</a>
+            <a href="#" onclick="showScreen('salida')">↘ Salida a Obra</a>
+            <a href="#" onclick="showScreen('regreso')">↖ Regreso de Obra</a>
+            <a href="#" onclick="showScreen('historial')">📜 Historial Log</a>
+            <a href="#" onclick="exportarExcel()" class="btn-exportar-menu">📥 Exportar Excel</a>
+            <a href="#" onclick="cerrarSesion()" class="btn-logout-menu">🚪 Cerrar Sesión</a>
+        </nav>
 
-        <!-- HOME -->
-        <section id="view-home" class="view">
-            <div class="card">
-                <h2>¡Hola!</h2>
-                <p>Bienvenido al sistema móvil de fichaje.</p>
-                <button class="btn-main" onclick="app.nav('view-employee')">Ir a panel de fichaje</button>
-            </div>
-        </section>
+        <div id="overlay" onclick="toggleMenu()"></div>
 
-        <!-- EMPLEADO -->
-        <section id="view-employee" class="view">
-            <div class="card">
-                <div id="status-badge" class="badge">Estado</div>
-                <h3 id="emp-status-text">...</h3>
-                <button id="btn-in" class="btn-punch btn-success" onclick="app.punch('ENTRADA')">Fichar entrada</button>
-                <button id="btn-out" class="btn-punch btn-danger" style="display:none;" onclick="app.punch('SALIDA')">Fichar salida</button>
+        <main class="container">
+            <!-- Buscador Global -->
+            <div id="busqueda-container" class="card hidden">
+                <input type="text" id="buscador" placeholder="🔍 Buscar herramienta..." oninput="renderizar()">
             </div>
-            <div class="card">
-                <h3>Tus últimos registros</h3>
-                <div class="filter-row">
-                    <label>Mes:</label>
-                    <input type="month" id="filter-date-emp" onchange="app.renderEmployeePanel()">
-                </div>
-                <div id="emp-history"></div>
-            </div>
-        </section>
 
-        <!-- GESTIÓN EMPLEADOS -->
-        <section id="view-admin-employees" class="view">
-            <div class="card">
-                <h3 id="form-title">Crear empleado</h3>
-                <input type="hidden" id="edit-id">
-                <input type="text" id="new-emp-name" placeholder="Nombre completo">
-                <input type="password" id="new-emp-pass" placeholder="Contraseña">
-                <button class="btn-success" onclick="app.saveEmployee()">Registrar</button>
-                <button id="btn-action-cancel" class="btn-secondary" style="display:none;margin-top:5px" onclick="app.resetForm()">Cancelar</button>
-            </div>
-            <div class="card"><h3>Lista personal</h3><div id="admin-users-list"></div></div>
-        </section>
+            <!-- Pantalla Inicio -->
+            <section id="screen-inicio" class="view">
+                <h2>📦<i> Stock y Ubicaciones</i></h2>
+                <div id="lista-total"></div>
+            </section>
 
-        <!-- REGISTROS POR EMPLEADO -->
-        <section id="view-admin-by-employee" class="view">
-            <div class="card"><h3>Seleccionar empleado</h3><div id="admin-select-employee-list"></div></div>
-            <div id="admin-employee-detail-card" class="card" style="display:none;">
-                <h3 id="detail-employee-name">...</h3>
-                <div class="filter-row">
-                    <label>Mes:</label>
-                    <input type="month" id="filter-date-admin-detail" onchange="app.refreshCurrentDetail()">
-                </div>
-                <div id="admin-employee-logs-detail"></div>
-                <button class="btn-secondary" onclick="document.getElementById('admin-employee-detail-card').style.display='none'">Cerrar</button>
-            </div>
-        </section>
+            <!-- Pantalla Registro -->
+            <section id="screen-nuevo" class="view hidden">
+                <h2>➕ Nueva Compra</h2>
+                <form id="form-nuevo" class="card">
+                    <input type="text" id="nombre" placeholder="Nombre (Ej: Pala)" required>
+                    <input type="number" id="cantidad" placeholder="Cantidad comprada" required>
+                    <input type="number" id="costo" placeholder="Costo total (€)" step="0.01">
+                    <label class="label-input">Fecha de compra:</label>
+                    <input type="date" id="fecha">
+                    <button type="submit" class="btn-save">Registrar Entrada</button>
+                </form>
+            </section>
 
-        <!-- ESTADO EN VIVO -->
-        <section id="view-admin-status" class="view">
-            <div class="card"><h3>🟢 En vivo</h3><div id="admin-status-list"></div></div>
-        </section>
+            <!-- Pantallas de Salida y Regreso -->
+            <section id="screen-salida" class="view hidden"><h2>↘ Enviar a Obra</h2><div id="lista-salida"></div></section>
+            <section id="screen-regreso" class="view hidden"><h2>↖ Retorno al Almacén</h2><div id="lista-regreso"></div></section>
 
-        <!-- HISTORIAL GLOBAL -->
-        <section id="view-admin-logs" class="view">
-            <div class="card">
-                <h3>Historial global completo</h3>
-                <div class="filter-row">
-                    <label>Filtrar mes:</label>
-                    <input type="month" id="filter-date-admin-logs" onchange="app.renderAdminLogs()">
-                </div>
-                <div id="admin-logs-list"></div>
-            </div>
-        </section>
+            <!-- Pantalla Historial -->
+            <section id="screen-historial" class="view hidden">
+                <h2>📜 Movimientos</h2>
+                <button onclick="borrarHistorial()" class="btn-borrar-hist">Limpiar Historial</button>
+                <div id="lista-historial"></div>
+            </section>
+        </main>
     </div>
+
+    <!-- SCRIPTS DE FIREBASE (Versión 8 Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- Tu Script Principal -->
     <script src="script.js"></script>
 </body>
 </html>

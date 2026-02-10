@@ -1,385 +1,281 @@
-/** 
- * CONFIGURACIÓN DE FIREBASE 
- **/
+// CONFIGURACIÓN DE TU PROYECTO FIREBASE (Obtenida de tu foto)
 const firebaseConfig = {
-    apiKey: "AIzaSyCeSB3MXhuKiJ9XANBfHzwEWU1e8mlqB6k",
-    authDomain: "fichajes-ec381.firebaseapp.com",
-    databaseURL: "https://fichajes-ec381-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "fichajes-ec381",
-    storageBucket: "fichajes-ec381.firebasestorage.app",
-    messagingSenderId: "650676337319",
-    appId: "1:650676337319:web:18140b21d1103e4b20b982",
-    measurementId: "G-NTBW1YL7KP"
+    apiKey: "AIzaSyD3BA__Bl9Ao1g4P9F6WUR93uEatnUKsNk",
+    authDomain: "stock-almacen-b9af8.firebaseapp.com",
+    databaseURL: "https://stock-almacen-b9af8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "stock-almacen-b9af8",
+    storageBucket: "stock-almacen-b9af8.firebasestorage.app",
+    messagingSenderId: "966227531987",
+    appId: "1:966227531987:web:6c4ee4e2795e12eaad9c26"
 };
 
 // Inicializamos Firebase
-try {
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.database(); 
-} catch (e) {
-    console.error("Error Firebase: ", e);
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-/** OBJETO PRINCIPAL **/
-const app = {
-    users: [], 
-    logs: [], 
-    currentUser: null, 
+// Variables globales que se sincronizarán con la nube
+let inventario = [];
+let historial = [];
 
-    // INICIO
-    init: function() {
-        db.ref('/').on('value', (snapshot) => {
-            const data = snapshot.val() || {}; 
-            this.users = data.users || [];
-            this.logs = data.logs || [];
-            if (this.users.length === 0) {
-                this.users = [{ id: 'admin', name: 'principal', role: 'admin', pass: 'admin123' }];
-                this.saveData(); 
-            }
-            this.refreshCurrentView();
-        });
+// ESCUCHADOR DE DATOS: Cuando algo cambie en la nube, se actualiza tu app solo
+db.ref('/').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        inventario = data.inventario || [];
+        historial = data.historial || [];
+        renderizar(); // Volvemos a dibujar todo con los datos nuevos
+    }
+});
 
-        // Mes actual por defecto al cargar
-        const now = new Date();
-        const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        setTimeout(() => {
-            ['filter-date-emp', 'filter-date-admin-logs', 'filter-date-admin-detail'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.value = monthStr;
-            });
-        }, 300);
-
-        const savedSession = localStorage.getItem('session');
-        if (savedSession) {
-            this.currentUser = JSON.parse(savedSession);
-            this.setupUI(this.currentUser);
-            this.nav('view-home');
-        }
-    },
-
-    saveData: function() {
-        db.ref('/').set({ users: this.users, logs: this.logs });
-    },
-
-    toggleMenu: function() {
-        const isActive = document.getElementById('sidebar').classList.toggle('active'); 
-        document.getElementById('overlay').style.display = isActive ? 'block' : 'none'; 
-    },
-
-    nav: function(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
-        const targetView = document.getElementById(viewId);
-        if(targetView) targetView.classList.add('active'); 
-        if (document.getElementById('sidebar').classList.contains('active')) this.toggleMenu(); 
-        
-        if(viewId === 'view-admin-status') this.renderAdminStatus(); 
-        if(viewId === 'view-admin-employees') this.renderAdminUsers(); 
-        if(viewId === 'view-admin-logs') this.renderAdminLogs(); 
-        if(viewId === 'view-admin-by-employee') this.renderAdminByEmployee(); 
-        if(viewId === 'view-employee') this.renderEmployeePanel(); 
-    },
-
-    login: function() {
-        const u = document.getElementById('login-user').value.trim().toLowerCase(); 
-        const p = document.getElementById('login-pass').value.trim(); 
-        const user = this.users.find(user => user.id === u || user.name.toLowerCase() === u);
-        if (user && user.pass === p) { 
-            this.currentUser = user; 
-            localStorage.setItem('session', JSON.stringify(this.currentUser));
-            this.setupUI(user); 
-            this.nav('view-home'); 
-        } else alert("Acceso denegado"); 
-    },
-
-    setupUI: function(user) {
-        const btn = document.getElementById('menu-btn');
-        if(btn) btn.style.display = 'block'; 
-        document.getElementById('menu-user-name').innerText = user.name; 
-        document.getElementById('menu-user-role').innerText = user.role === 'admin' ? 'Administrador' : 'Empleado'; 
-        document.getElementById('admin-only-menu').style.display = (user.role === 'admin') ? 'block' : 'none'; 
-    },
-
-    logout: function() {
-        this.currentUser = null; 
-        localStorage.removeItem('session');
-        document.getElementById('menu-btn').style.display = 'none'; 
-        this.nav('view-login'); 
-    },
-
-    // FUNCIÓN PARA QUITAR SEGUNDOS
-    formatTimeDisplay: function(timeStr) {
-        if (!timeStr) return "--:--";
-        const parts = timeStr.split(', ');
-        if (parts.length < 2) return timeStr;
-        const timePart = parts[1];
-        const timeParts = timePart.split(':');
-        if (timeParts.length < 2) return timePart;
-        return `${timeParts[0]}:${timeParts[1]}`; 
-    },
-
-    punch: function(type) {
-        if (!navigator.geolocation) return alert("GPS no disponible");
-        const btn = type === 'ENTRADA' ? document.getElementById('btn-in') : document.getElementById('btn-out');
-        const originalText = btn.innerText;
-        btn.innerText = "Ubicando..."; btn.disabled = true;
-        navigator.geolocation.getCurrentPosition((pos) => {
-            const now = new Date();
-            const newLog = {
-                userId: this.currentUser.id, userName: this.currentUser.name,
-                type: type, time: now.toLocaleString(), timestamp: now.getTime(),
-                coords: [pos.coords.latitude, pos.coords.longitude]
-            };
-            this.logs.push(newLog);
-            this.saveData(); 
-            btn.disabled = false;
-            btn.innerText = originalText;
-            alert("Fichaje guardado correctamente.");
-        }, (err) => { 
-            alert("Error GPS: Activa la ubicación"); 
-            btn.disabled = false; btn.innerText = originalText;
-        }, { enableHighAccuracy: true, timeout: 10000 });
-    },
-
-    editLog: function(timestamp) {
-        const log = this.logs.find(l => l.timestamp === timestamp);
-        if (!log) return;
-        const newTimeStr = prompt("Editar hora (Formato: DD/MM/AAAA, HH:MM:SS)", log.time);
-        if (newTimeStr) {
-            try {
-                const parts = newTimeStr.split(', ');
-                const dP = parts[0].split('/');
-                const tP = parts[1].split(':');
-                const nD = new Date(dP[2], dP[1]-1, dP[0], tP[0], tP[1], tP[2]);
-                if (isNaN(nD.getTime())) throw new Error();
-                log.time = newTimeStr;
-                log.timestamp = nD.getTime();
-                this.saveData(); 
-            } catch (e) { alert("Formato incorrecto"); }
-        }
-    },
-
-    deleteLog: function(timestamp) {
-        if (confirm("¿Borrar permanentemente?")) {
-            this.logs = this.logs.filter(l => l.timestamp !== timestamp);
-            this.saveData();
-        }
-    },
-
-    formatDuration: function(ms) {
-        if (ms <= 0) return "0m";
-        const min = Math.floor(ms / 60000);
-        return `${Math.floor(min / 60)}h ${min % 60}m`;
-    },
-
-    getPairedLogs: function(logsToProcess) {
-        const sorted = [...logsToProcess].sort((a, b) => a.timestamp - b.timestamp);
-        const paired = []; const open = {};
-        sorted.forEach(l => {
-            if (l.type === 'ENTRADA') open[l.userId] = l;
-            else {
-                const entry = open[l.userId];
-                paired.push({ userName: l.userName, userId: l.userId, entry: entry || null, exit: l, duration: entry ? l.timestamp - entry.timestamp : 0 });
-                delete open[l.userId];
-            }
-        });
-        for (let id in open) paired.push({ userName: open[id].userName, userId: open[id].userId, entry: open[id], exit: null, duration: 0 });
-        return paired.reverse();
-    },
-
-    filterLogsByMonth: function(logsArray, inputId) {
-        const el = document.getElementById(inputId);
-        if(!el || !el.value) return logsArray; 
-        const [year, month] = el.value.split('-').map(Number);
-        return logsArray.filter(l => {
-            const d = new Date(l.timestamp);
-            return d.getFullYear() === year && (d.getMonth() + 1) === month;
-        });
-    },
-
-    // REFRESCAR VISTA ACTUAL
-    refreshCurrentView: function() {
-        const active = document.querySelector('.view.active');
-        if (active) this.nav(active.id);
-        const detailCard = document.getElementById('admin-employee-detail-card');
-        if (detailCard && detailCard.style.display === 'block') {
-            this.refreshCurrentDetail();
-        }
-    },
-
-    // --- FUNCIÓN CORREGIDA: REFRESCAR DETALLE DE EMPLEADO ---
-    refreshCurrentDetail: function() {
-        const title = document.getElementById('detail-employee-name').innerText;
-        const empName = title.replace('Jornadas de ', '');
-        const user = this.users.find(u => u.name === empName);
-        if (user) this.viewEmployeeDetail(user.id);
-    },
-
-    renderEmployeePanel: function() {
-        const uLogs = this.logs.filter(l => l.userId === this.currentUser.id);
-        const filtered = this.filterLogsByMonth(uLogs, 'filter-date-emp');
-        const paired = this.getPairedLogs(filtered);
-        const isWorking = uLogs.length > 0 && uLogs[uLogs.length-1].type === 'ENTRADA';
-        document.getElementById('status-badge').innerText = isWorking ? 'TRABAJANDO' : 'FUERA';
-        document.getElementById('status-badge').style.background = isWorking ? 'var(--success)' : 'var(--danger)';
-        document.getElementById('btn-in').style.display = isWorking ? 'none' : 'block';
-        document.getElementById('btn-out').style.display = isWorking ? 'block' : 'none';
-        document.getElementById('emp-history').innerHTML = paired.map(p => `
-            <div class="user-row">
-                <b>📅 ${p.entry ? p.entry.time.split(',')[0] : p.exit.time.split(',')[0]}</b>
-                <small>${p.entry ? 'E: ' + this.formatTimeDisplay(p.entry.time) : '--'} | ${p.exit ? 'S: ' + this.formatTimeDisplay(p.exit.time) : '...'}</small>
-                ${p.exit && p.entry ? `<b style="color:var(--primary)">Total: ${this.formatDuration(p.duration)}</b>` : ''}
-                <div style="margin-top:5px">
-                    ${p.entry ? `<a href="https://www.google.com/maps?q=${p.entry.coords[0]},${p.entry.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa E</a>` : ''}
-                    ${p.exit ? ` | <a href="https://www.google.com/maps?q=${p.exit.coords[0]},${p.exit.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa S</a>` : ''}
-                </div>
-            </div>
-        `).join('') || '<p style="margin-top:10px">Sin registros este mes.</p>';
-    },
-
-    renderAdminByEmployee: function() {
-        const emps = this.users.filter(u => u.role !== 'admin');
-        document.getElementById('admin-select-employee-list').innerHTML = emps.map(u => `<button class="btn-user-select" onclick="app.viewEmployeeDetail('${u.id}')">👤 ${u.name}</button>`).join('') || 'No hay empleados registrados.';
-    },
-
-    viewEmployeeDetail: function(userId) {
-        const user = this.users.find(u => u.id === userId);
-        const uLogs = this.logs.filter(l => l.userId === userId);
-        const filtered = this.filterLogsByMonth(uLogs, 'filter-date-admin-detail');
-        const paired = this.getPairedLogs(filtered);
-        document.getElementById('detail-employee-name').innerText = `Jornadas de ${user.name}`;
-        document.getElementById('admin-employee-logs-detail').innerHTML = paired.map(p => `
-            <div class="user-row">
-                <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
-                    <b>📅 ${p.entry ? p.entry.time.split(',')[0] : p.exit.time.split(',')[0]}</b>
-                    <div>
-                        ${p.entry ? `<button class="btn-small btn-edit" onclick="app.editLog(${p.entry.timestamp})">✏️</button><button class="btn-small btn-del" onclick="app.deleteLog(${p.entry.timestamp})">🗑️</button>` : ''}
-                        ${p.exit ? `<button class="btn-small btn-edit" onclick="app.editLog(${p.exit.timestamp})">✏️</button><button class="btn-small btn-del" onclick="app.deleteLog(${p.exit.timestamp})">🗑️</button>` : ''}
-                    </div>
-                </div>
-                <small>${p.entry ? 'E: ' + this.formatTimeDisplay(p.entry.time) : '--'} | ${p.exit ? 'S: ' + this.formatTimeDisplay(p.exit.time) : 'En curso'}</small>
-                ${p.exit && p.entry ? `<b style="color:var(--primary)">Horas: ${this.formatDuration(p.duration)}</b>` : ''}
-                <div style="margin-top:5px">
-                    ${p.entry ? `<a href="https://www.google.com/maps?q=${p.entry.coords[0]},${p.entry.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa E</a>` : ''}
-                    ${p.exit ? ` | <a href="https://www.google.com/maps?q=${p.exit.coords[0]},${p.exit.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa S</a>` : ''}
-                </div>
-            </div>
-        `).join('') || '<p style="margin-top:10px">Sin datos este mes.</p>';
-        document.getElementById('admin-employee-detail-card').style.display = 'block';
-    },
-
-    renderAdminStatus: function() {
-        const emps = this.users.filter(u => u.role !== 'admin');
-        document.getElementById('admin-status-list').innerHTML = emps.map(u => {
-            const uLogs = this.logs.filter(l => l.userId === u.id);
-            const isWorking = uLogs.length > 0 && uLogs[uLogs.length-1].type === 'ENTRADA';
-            return `<div class="status-item ${isWorking ? 'status-working' : 'status-out'}"><b>${u.name}</b>: ${isWorking ? 'TRABAJANDO' : 'FUERA'}</div>`;
-        }).join('') || 'Sin empleados.';
-    },
-
-    renderAdminLogs: function() {
-        const filtered = this.filterLogsByMonth(this.logs, 'filter-date-admin-logs');
-        const paired = this.getPairedLogs(filtered);
-        document.getElementById('admin-logs-list').innerHTML = paired.map(p => `
-            <div class="user-row">
-                <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
-                    <strong>👤 ${p.userName}</strong>
-                    <div>
-                        ${p.entry ? `<button class="btn-small btn-edit" onclick="app.editLog(${p.entry.timestamp})">✏️</button><button class="btn-small btn-del" onclick="app.deleteLog(${p.entry.timestamp})">🗑️</button>` : ''}
-                        ${p.exit ? `<button class="btn-small btn-edit" onclick="app.editLog(${p.exit.timestamp})">✏️</button><button class="btn-small btn-del" onclick="app.deleteLog(${p.exit.timestamp})">🗑️</button>` : ''}
-                    </div>
-                </div>
-                <small>E: ${p.entry ? this.formatTimeDisplay(p.entry.time) : '--'} | S: ${p.exit ? this.formatTimeDisplay(p.exit.time) : '...'}</small>
-                ${p.exit && p.entry ? `<b style="color:var(--success)">⏱️ ${this.formatDuration(p.duration)}</b>` : ''}
-                <div style="margin-top:5px">
-                    ${p.entry ? `<a href="https://www.google.com/maps?q=${p.entry.coords[0]},${p.entry.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa E</a>` : ''}
-                    ${p.exit ? ` | <a href="https://www.google.com/maps?q=${p.exit.coords[0]},${p.exit.coords[1]}" target="_blank" style="font-size:0.7rem; color:var(--primary)">📍 Mapa S</a>` : ''}
-                </div>
-            </div>
-        `).join('') || '<p style="margin-top:10px">Sin datos este mes.</p>';
-    },
-
-    renderAdminUsers: function() {
-        const emps = this.users.filter(u => u.role !== 'admin');
-        document.getElementById('admin-users-list').innerHTML = emps.map(u => `<div class="user-row" style="flex-direction:row; justify-content:space-between; align-items:center;"><div><b>${u.name}</b><br><small>ID: ${u.id}</small></div><div class="user-btns"><button class="btn-small btn-edit" onclick="app.editEmployee('${u.id}')">E</button><button class="btn-small btn-del" onclick="app.deleteEmployee('${u.id}')">X</button></div></div>`).join('') || 'Sin empleados.';
-    },
-
-    saveEmployee: function() {
-        const name = document.getElementById('new-emp-name').value.trim();
-        const pass = document.getElementById('new-emp-pass').value.trim();
-        const editId = document.getElementById('edit-id').value;
-        if(!name || !pass) return alert("Faltan datos");
-        if(editId){
-            const user = this.users.find(u => u.id === editId);
-            user.name = name; user.pass = pass;
-        } else {
-            const id = name.toLowerCase().replace(/\s+/g, '');
-            this.users.push({ id, name, role: 'employee', pass: pass });
-        }
-        this.saveData(); this.resetForm();
-    },
-
-    editEmployee: function(id) {
-        const user = this.users.find(u => u.id === id);
-        document.getElementById('form-title').innerText = "Editar empleado";
-        document.getElementById('edit-id').value = user.id;
-        document.getElementById('new-emp-name').value = user.name;
-        document.getElementById('new-emp-pass').value = user.pass;
-        document.getElementById('btn-action-cancel').style.display = "block";
-    },
-
-    resetForm: function() {
-        document.getElementById('form-title').innerText = "Crear empleado";
-        document.getElementById('edit-id').value = "";
-        document.getElementById('new-emp-name').value = "";
-        document.getElementById('new-emp-pass').value = "";
-        document.getElementById('btn-action-cancel').style.display = "none";
-    },
-
-    deleteEmployee: function(id) {
-        if(confirm("¿Borrar empleado?")){
-            this.users = this.users.filter(u => u.id !== id);
-            this.saveData(); 
-        }
-    },
-
-    downloadBackup: function() {
-        const data = { users: this.users, logs: this.logs };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `Backup_${new Date().toLocaleDateString()}.json`;
-        a.click();
-    },
-
-    importBackup: function(event) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = JSON.parse(e.target.result);
-            if (confirm("¿Sobrescribir datos de la NUBE?")) {
-                this.users = data.users; this.logs = data.logs;
-                this.saveData(); 
-            }
-        };
-        reader.readAsText(event.target.files[0]);
-    },
-
-    generateExcel: function() {
-        const filterId = this.currentUser.role === 'admin' ? 'filter-date-admin-logs' : 'filter-date-emp';
-        const filterVal = document.getElementById(filterId).value;
-        const filtered = this.filterLogsByMonth(this.logs, filterId);
-        const paired = this.getPairedLogs(filtered);
-        const excelData = paired.map(p => ({
-            "Empleado": p.userName,
-            "Fecha": p.entry ? p.entry.time.split(',')[0] : p.exit.time.split(',')[0],
-            "Entrada": p.entry ? this.formatTimeDisplay(p.entry.time) : "---",
-            "Salida": p.exit ? this.formatTimeDisplay(p.exit.time) : "En curso",
-            "Total Horas": p.exit ? this.formatDuration(p.duration) : "---"
-        }));
-        const ws = XLSX.utils.json_to_sheet(excelData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Jornadas");
-        XLSX.writeFile(wb, `Fichajes_${filterVal || 'Historico'}.xlsx`);
+// COMPROBACIÓN INICIAL DE SESIÓN (Persiste en el móvil)
+window.onload = function() {
+    if (localStorage.getItem('almacen_juanjo_login') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
     }
 };
 
-window.onload = () => app.init();
+// FUNCIÓN DE LOGIN (Sin cambios, admin/admin123)
+window.verificarAcceso = function() {
+    const userVal = document.getElementById('user').value.trim();
+    const passVal = document.getElementById('pass').value;
+
+    if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
+        localStorage.setItem('almacen_juanjo_login', 'true');
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        renderizar();
+    } else {
+        const errorMsg = document.getElementById('login-error');
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+    }
+};
+
+// CERRAR SESIÓN
+window.cerrarSesion = function() {
+    if (confirm("¿Cerrar sesión?")) {
+        localStorage.removeItem('almacen_juanjo_login');
+        location.reload();
+    }
+};
+
+// GUARDAR NUEVA HERRAMIENTA O JUNTAR STOCK EN LA NUBE
+document.getElementById('form-nuevo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nombreInput = document.getElementById('nombre').value.trim();
+    const cantNueva = parseInt(document.getElementById('cantidad').value);
+    const costoNuevo = document.getElementById('costo').value || '0';
+    const fechaNueva = document.getElementById('fecha').value;
+
+    const itemExistente = inventario.find(item => item.nombre.toLowerCase() === nombreInput.toLowerCase());
+
+    if (itemExistente) {
+        itemExistente.ubicaciones["Almacén"] += cantNueva;
+        itemExistente.costo = costoNuevo;
+        itemExistente.fecha = fechaNueva;
+        anotarHistorial(itemExistente.nombre, `Compra adicional: +${cantNueva} un.`);
+    } else {
+        const nuevo = {
+            id: Date.now(),
+            nombre: nombreInput,
+            costo: costoNuevo,
+            fecha: fechaNueva,
+            ubicaciones: { "Almacén": cantNueva }
+        };
+        inventario.push(nuevo);
+        anotarHistorial(nombreInput, `Nueva compra: ${cantNueva} un.`);
+    }
+    
+    actualizarFirebase(); // Guardamos en la nube
+    this.reset();
+    showScreen('inicio');
+});
+
+// EDITAR NOMBRE
+window.editarNombre = function(index) {
+    const nuevoNombre = prompt("Editar nombre de la herramienta:", inventario[index].nombre);
+    if (nuevoNombre !== null && nuevoNombre.trim() !== "") {
+        const nombreAnterior = inventario[index].nombre;
+        inventario[index].nombre = nuevoNombre.trim();
+        anotarHistorial(nuevoNombre, `Nombre cambiado (era: ${nombreAnterior})`);
+        actualizarFirebase();
+    }
+};
+
+// SALIDA A OBRA
+window.salidaObra = function(index) {
+    let item = inventario[index];
+    let cantEnAlmacen = item.ubicaciones["Almacén"];
+
+    if (cantEnAlmacen > 0) {
+        const obraDestino = prompt("¿A qué obra envías " + item.nombre + "?");
+        if (obraDestino) {
+            let cantEnviar = prompt(`¿Cuántas unidades envías a ${obraDestino}?`, "1");
+            cantEnviar = parseInt(cantEnviar);
+
+            if (!isNaN(cantEnviar) && cantEnviar > 0 && cantEnviar <= cantEnAlmacen) {
+                item.ubicaciones["Almacén"] -= cantEnviar;
+                if (!item.ubicaciones[obraDestino]) item.ubicaciones[obraDestino] = 0;
+                item.ubicaciones[obraDestino] += cantEnviar;
+                anotarHistorial(item.nombre, `Enviado a ${obraDestino}: ${cantEnviar} un.`);
+                actualizarFirebase();
+            } else {
+                alert("Cantidad no válida.");
+            }
+        }
+    } else {
+        alert("No queda stock en Almacén.");
+    }
+};
+
+// REGRESO RÁPIDO
+window.regresoRapido = function(index, nombreObra) {
+    let item = inventario[index];
+    let cantEnObra = item.ubicaciones[nombreObra];
+
+    let cantRegreso = prompt(`¿Cuántas unidades regresan de ${nombreObra}?`, "1");
+    cantRegreso = parseInt(cantRegreso);
+
+    if (!isNaN(cantRegreso) && cantRegreso > 0 && cantRegreso <= cantEnObra) {
+        item.ubicaciones[nombreObra] -= cantRegreso;
+        item.ubicaciones["Almacén"] += cantRegreso;
+        anotarHistorial(item.nombre, `Regresó de ${nombreObra}: ${cantRegreso} un.`);
+        actualizarFirebase();
+    } else {
+        alert("Cantidad no válida.");
+    }
+};
+
+// ELIMINAR HERRAMIENTA
+window.eliminar = function(index) {
+    if(confirm("¿Borrar definitivamente de la nube?")) {
+        inventario.splice(index, 1);
+        actualizarFirebase();
+    }
+};
+
+// LIMPIAR HISTORIAL
+window.borrarHistorial = function() {
+    if(confirm("¿Limpiar historial de la nube?")) {
+        historial = [];
+        actualizarFirebase();
+    }
+};
+
+// FUNCION PARA SUBIR TODO A FIREBASE
+function actualizarFirebase() {
+    db.ref('/').set({
+        inventario: inventario,
+        historial: historial
+    });
+}
+
+function anotarHistorial(nombre, accion) {
+    historial.unshift({ fecha: new Date().toLocaleString(), nombre, accion });
+    if (historial.length > 50) historial.pop();
+}
+
+// FUNCIONES VISUALES (Se mantienen igual)
+function formatearFechaVisual(fechaStr) {
+    if (!fechaStr) return 's/f'; 
+    const [anio, mes, dia] = fechaStr.split('-'); 
+    return `${dia}-${mes}-${anio}`; 
+}
+
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
+
+function showScreen(screenId) {
+    document.querySelectorAll('.view').forEach(s => s.classList.add('hidden'));
+    document.getElementById('screen-' + screenId).classList.remove('hidden');
+    const buscadorCont = document.getElementById('busqueda-container');
+    if (buscadorCont) {
+        if (['inicio', 'salida', 'regreso'].includes(screenId)) buscadorCont.classList.remove('hidden');
+        else buscadorCont.classList.add('hidden');
+    }
+    if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+    renderizar();
+}
+
+function renderizar() {
+    const lTotal = document.getElementById('lista-total');
+    const lSalida = document.getElementById('lista-salida');
+    const lRegreso = document.getElementById('lista-regreso');
+    const lHistorial = document.getElementById('lista-historial');
+    const buscador = document.getElementById('buscador');
+    const filtro = buscador ? buscador.value.toLowerCase() : '';
+
+    if (!lTotal || document.getElementById('app-container').classList.contains('hidden')) return;
+
+    lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = '';
+
+    inventario.forEach((item, index) => {
+        if (!item.nombre.toLowerCase().includes(filtro)) return;
+
+        let badgesHTML = '';
+        let badgesRegresoHTML = ''; 
+
+        for (let loc in item.ubicaciones) {
+            let cant = item.ubicaciones[loc];
+            if (cant > 0 || loc === "Almacén") {
+                let clase = (loc === "Almacén") ? "badge-almacen" : "badge-obra";
+                let textoBadge = `<span class="${clase}">📍 ${loc}: ${cant} un.</span>`;
+                badgesHTML += textoBadge;
+                if (loc !== "Almacén" && cant > 0) {
+                    badgesRegresoHTML += `<div class="fila-regreso">${textoBadge}<button class="btn-mini-regreso" onclick="regresoRapido(${index}, '${loc}')">↖ Devolver</button></div>`;
+                } else {
+                    badgesRegresoHTML += textoBadge;
+                }
+            }
+        }
+
+        const btnSalidaHTML = `<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button>`;
+
+        const cardHTML = `
+            <div class="item-card">
+                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
+                ${btnSalidaHTML}
+                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
+                ${badgesHTML}
+                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
+            </div>
+        `;
+
+        const cardRegresoHTML = `
+            <div class="item-card">
+                <span class="item-nombre" ondblclick="editarNombre(${index})">${item.nombre}</span>
+                <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
+                ${badgesRegresoHTML}
+                <button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button>
+            </div>
+        `;
+        
+        lTotal.innerHTML += cardHTML;
+        lSalida.innerHTML += cardHTML;
+        lRegreso.innerHTML += cardRegresoHTML; 
+    });
+
+    historial.forEach(h => {
+        lHistorial.innerHTML += `<div class="hist-item"><span class="hist-fecha">${h.fecha}</span><br><strong>${h.nombre}</strong>: ${h.accion}</div>`;
+    });
+}
+
+function exportarExcel() {
+    if (inventario.length === 0) return alert("No hay datos.");
+    let csvContent = "Nombre;Costo;Fecha;Ubicacion;Cantidad\n";
+    inventario.forEach(item => {
+        for (let loc in item.ubicaciones) {
+            if (item.ubicaciones[loc] > 0 || loc === "Almacén")
+                csvContent += `${item.nombre};${item.costo};${item.fecha};${loc};${item.ubicaciones[loc]}\n`;
+        }
+    });
+    const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Almacen_EcoStruct_${new Date().toLocaleDateString()}.csv`;
+    link.click();
+}
