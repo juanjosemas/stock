@@ -1,0 +1,285 @@
+/* --- General --- */
+* { 
+  box-sizing: border-box; /* El ancho incluye el relleno y el borde para que no desborde */
+}
+
+body { 
+  font-family: 'Segoe UI', sans-serif; /* Fuente base de la aplicación */
+  margin: 0; /* Elimina márgenes exteriores del navegador */
+  background: #f0f2f5; /* Color gris suave de fondo */
+  color: #1c1e21; /* Color de texto principal */
+}
+
+h2 {
+  font-family: Lobster; /* Fuente decorativa para títulos */
+  text-decoration: underline; /* Subrayado decorativo */
+}
+
+/* --- Barra Superior --- */
+.top-bar { 
+  background: #2c3e50; /* Azul oscuro para la cabecera */
+  color: white; /* Texto en blanco */
+  height: 60px; /* Altura fija de la barra */
+  display: flex; /* Alineación flexible de elementos */
+  align-items: center; /* Centrado vertical de logo e icono */
+  padding: 0 15px; /* Espaciado a los lados */
+  position: sticky; /* Se queda pegada arriba al hacer scroll */
+  top: 0; /* Posición cero respecto al techo */
+  z-index: 100; /* Prioridad de visualización sobre el contenido */
+}
+
+.menu-trigger { 
+  font-size: 24px; /* Tamaño del icono hamburguesa */
+  cursor: pointer; /* Cambia el puntero al pasar por encima */
+  margin-right: 15px; /* Separación con el logo */
+}
+
+.logo { 
+  font-weight: bold; /* Logo resaltado en negrita */
+  font-size: 1.2rem; /* Tamaño de letra del logo */
+}
+
+.ico { 
+  border-radius: 50%; /* Forma circular para la imagen */
+  margin: 8px 8px 8px 120px; /* Margen para posicionarla a la derecha */
+  animation: logo 3s ease-in-out; /* Aplica la animación definida abajo */
+  background-color: black; /* Fondo negro tras la imagen */
+  border: 2px solid red; /* Borde rojo circular */
+  vertical-align: middle; /* Alineación vertical con el texto */
+}
+
+@keyframes logo { 
+  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Inicia invisible, pequeña y sin rotar */
+  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina visible, tamaño real y dando 4 vueltas */
+}
+
+/* --- Menú Lateral --- */
+.sidebar { 
+  position: fixed; /* Menú flotante fijo */
+  left: -250px; /* Escondido por defecto a la izquierda */
+  top: 0; /* Alineado al techo */
+  width: 200px; /* Ancho del menú desplegable */
+  height: 100%; /* Ocupa todo el alto de la pantalla */
+  background: #fff; /* Fondo blanco para las opciones */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra derecha para profundidad */
+  transition: 0.3s; /* Velocidad de la animación al abrirse */
+  z-index: 200; /* Por encima de la barra superior */
+  padding-top: 20px; /* Espacio superior interno */
+  font-style: italic; /* Estilo de fuente cursiva */
+  font-family: Sriracha; /* Fuente personalizada */
+}
+
+.sidebar.active { 
+  left: 0; /* Posición visible al activarse */
+}
+
+.sidebar-header { 
+  padding: 15px; /* Relleno interno */
+  font-weight: bold; /* Texto en negrita */
+  border-bottom: 1px solid #eee; /* Línea divisoria inferior */
+  margin-bottom: 10px; /* Espacio antes de los enlaces */
+  color: #2c3e50; /* Color azul para el título */
+  text-align: center; /* Texto centrado */
+  font-family: Piedra; /* Tu fuente personalizada para el título */
+}
+
+.sidebar a { 
+  display: block; /* Cada enlace ocupa toda la línea */
+  padding: 15px; /* Espacio grande para facilitar el toque táctil */
+  color: #333; /* Color de texto de los enlaces */
+  text-decoration: none; /* Quita el subrayado por defecto */
+  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
+}
+
+/* --- Capa Oscura --- */
+#overlay { 
+  display: none; /* Oculta por defecto */
+  position: fixed; /* Cubre toda la pantalla */
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.5); /* Color negro con transparencia */
+  z-index: 150; 
+}
+
+#overlay.active { 
+  display: block; /* Visible cuando el menú está abierto */
+}
+
+/* --- Contenedores y Tarjetas --- */
+.container { 
+  padding: 15px; /* Espaciado interno del contenedor principal */
+}
+
+.view { 
+  animation: fadeIn 0.3s; /* Animación de aparición suave */
+}
+
+.hidden { 
+  display: none; /* Oculta elementos que no deben verse */
+}
+
+@keyframes fadeIn { 
+  from { opacity: 0; } /* Inicia totalmente transparente */
+  to { opacity: 1; } /* Termina totalmente opaco */
+}
+
+.card { 
+  background: white; /* Fondo blanco para tarjetas */
+  padding: 12px; /* Espaciado interno */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave inferior */
+  margin-bottom: 15px; /* Separación entre tarjetas */
+}
+
+input { 
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 12px; /* Relleno para que sea fácil escribir */
+  margin-bottom: 10px; /* Separación con el siguiente input */
+  border: 1px solid #ddd; /* Borde gris claro */
+  border-radius: 6px; /* Redondeo de esquinas */
+  font-size: 16px; /* Tamaño de letra legible */
+}
+
+/* --- Buscador Específico --- */
+#buscador {
+  margin-bottom: 0; /* Quita el margen inferior dentro de su card */
+  border: 2px solid #3498db; /* Borde azul para resaltarlo */
+  background: #fdfdfd; /* Fondo casi blanco */
+}
+
+.label-input {
+  display: block; /* Ocupa su propia línea */
+  font-size: 0.85rem; /* Letra pequeña para la etiqueta */
+  color: #666; /* Gris oscuro */
+  margin-bottom: 5px; /* Espacio con el input inferior */
+  font-weight: bold; /* Texto resaltado */
+}
+
+.btn-save { 
+  width: 100%; /* Botón de ancho completo */
+  background: #28a745; /* Color verde de éxito */
+  color: white; /* Letras blancas */
+  border: none; /* Sin borde */
+  padding: 15px; /* Relleno generoso para pulsar */
+  border-radius: 6px; /* Bordes redondeados */
+  font-weight: bold; /* Texto resaltado */
+}
+
+/* --- Tarjetas de Inventario --- */
+.item-card { 
+  background: white; /* Fondo blanco */
+  padding: 12px; /* Espacio interno compacto */
+  border-radius: 10px; /* Esquinas redondeadas */
+  margin-bottom: 10px; /* Separación entre tarjetas */
+  border-left: 6px solid #3498db; /* Barra azul lateral distintiva */
+  position: relative; /* Para posicionar elementos internos */
+}
+
+.item-nombre { 
+  font-weight: bold; /* Nombre en negrita */
+  font-size: 1.1rem; /* Tamaño de letra un poco más grande */
+  display: inline-block; /* Permite elementos al lado */
+  margin-right: 10px; /* Separación con el botón */
+  cursor: pointer; /* Indica que se puede interactuar */
+  border-bottom: 1px dashed transparent; /* Preparado para el hover */
+  transition: 0.2s; /* Animación suave */
+}
+
+.item-nombre:hover {
+  color: #3498db; /* Cambia a azul al pasar el ratón */
+  border-bottom: 1px dashed #3498db; /* Muestra subrayado discontinuo */
+}
+
+.info-stock {
+  font-size: 0.8rem; /* Tamaño algo más pequeño */
+  color: #666; /* Color gris para menos énfasis */
+  margin: 5px 0; /* Separación vertical */
+}
+
+.badge-obra { 
+  display: inline-block; /* Se ajusta al contenido */
+  background: #fff3cd; /* Fondo amarillo claro */
+  color: #856404; /* Texto marrón oscuro */
+  padding: 3px 8px; /* Relleno compacto */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 0.75rem; /* Letra pequeña */
+  margin-top: 3px; /* Separación superior */
+  margin-right: 4px; /* Separación lateral */
+  border: 1px solid #ffeeba; /* Borde amarillo suave */
+}
+
+.badge-almacen { 
+  display: inline-block; /* Se ajusta al contenido */
+  background: #d4edda; /* Fondo verde claro */
+  color: #155724; /* Texto verde oscuro */
+  padding: 3px 8px; /* Relleno compacto */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 0.75rem; /* Letra pequeña */
+  margin-top: 3px; /* Separación superior */
+  margin-right: 4px; /* Separación lateral */
+  border: 1px solid #c3e6cb; /* Borde verde suave */
+}
+
+.fila-regreso {
+  display: flex; /* Alinea badge y botón */
+  align-items: center; /* Centrado vertical */
+  gap: 8px; /* Espacio entre elementos */
+  margin-top: 4px; /* Separación superior */
+}
+
+.btn-mini-regreso {
+  background: #3498db; /* Azul */
+  color: white; 
+  border: none; 
+  padding: 3px 6px; 
+  border-radius: 4px; 
+  font-size: 0.7rem; 
+  font-weight: bold; 
+}
+
+.btn-enviar-peque {
+  background: #e74c3c; /* Rojo */
+  color: white; 
+  border: none; 
+  padding: 4px 10px; 
+  border-radius: 15px; 
+  font-size: 0.75rem; 
+  font-weight: bold; 
+  vertical-align: middle; 
+}
+
+.btn-borrar { 
+  background: #eee; 
+  color: #888; 
+  position: absolute; 
+  right: 8px; 
+  top: 8px; 
+  padding: 3px 6px; 
+  font-size: 0.75rem; 
+  border: none; 
+  border-radius: 5px;
+}
+
+.btn-borrar-hist { 
+  width: 100%; 
+  background: #6c757d; 
+  color: white; 
+  padding: 10px; 
+  border-radius: 5px; 
+  margin-bottom: 15px; 
+  border: none;
+}
+
+.hist-item { 
+  background: white; 
+  padding: 10px; 
+  border-bottom: 1px solid #eee; 
+  font-size: 0.85rem; 
+}
+
+.hist-fecha {
+  color: #888; 
+  font-weight: bold; 
+}

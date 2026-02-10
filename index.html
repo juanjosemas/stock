@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control de Almacén Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Barra Superior -->
+    <header class="top-bar">
+        <div class="menu-trigger" onclick="toggleMenu()">&#9776;</div>
+        <div class="logo">🏗️ <i>Almacén Pro</i></div>
+        
+        <div class="header-side"></div>
+        <h2><u><i><img src="img/Juanjo.ico" class="ico" width="35"></i></u></h2>
+        
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&family=Amatic+SC:wght@700&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Lobster&family=Metal+Mania&family=Yellowtail&family=Permanent+Marker&family=Piedra&family=Sriracha&display=swap" rel="stylesheet">
+    </header>
+
+    <!-- Menú Lateral -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">GESTIÓN DE EQUIPOS</div>
+        <a href="#" onclick="showScreen('inicio')">🏠 Inventario Total</a>
+        <a href="#" onclick="showScreen('nuevo')">➕ Comprar Herramienta</a>
+        <a href="#" onclick="showScreen('salida')">↘ Salida a Obra</a>
+        <a href="#" onclick="showScreen('regreso')">↖ Regreso de Obra</a>
+        <a href="#" onclick="showScreen('historial')">📜 Historial Log</a>
+    </nav>
+
+    <div id="overlay" onclick="toggleMenu()"></div>
+
+    <main class="container">
+        <!-- Buscador Global (visible en listas) -->
+        <div id="busqueda-container" class="card hidden">
+            <input type="text" id="buscador" placeholder="🔍 Buscar herramienta..." oninput="renderizar()">
+        </div>
+
+        <!-- Pantalla Inicio -->
+        <section id="screen-inicio" class="view">
+            <h2>📦<i> Stock y Ubicaciones</i></h2>
+            <div id="lista-total"></div>
+        </section>
+
+        <!-- Pantalla Registro -->
+        <section id="screen-nuevo" class="view hidden">
+            <h2>➕ Nueva Compra</h2>
+            <form id="form-nuevo" class="card">
+                <input type="text" id="nombre" placeholder="Nombre (Ej: Pala)" required>
+                <input type="number" id="cantidad" placeholder="Cantidad comprada" required>
+                <input type="number" id="costo" placeholder="Costo total (€)" step="0.01">
+                <label class="label-input">Fecha de compra:</label>
+                <input type="date" id="fecha">
+                <button type="submit" class="btn-save">Registrar Entrada</button>
+            </form>
+        </section>
+
+        <!-- Pantallas de Salida y Regreso -->
+        <section id="screen-salida" class="view hidden"><h2>↘ Enviar a Obra</h2><div id="lista-salida"></div></section>
+        <section id="screen-regreso" class="view hidden"><h2>↖ Retorno al Almacén</h2><div id="lista-regreso"></div></section>
+
+        <!-- Pantalla Historial -->
+        <section id="screen-historial" class="view hidden">
+            <h2>📜 Movimientos</h2>
+            <button onclick="borrarHistorial()" class="btn-borrar-hist">Limpiar Historial</button>
+            <div id="lista-historial"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
