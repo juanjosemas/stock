@@ -345,6 +345,7 @@ input {
   border-left: 6px solid #3498db; /* Franja azul distintiva a la izquierda */
   position: relative; /* Base para el botón de borrar absoluto */
   user-select: none; /* Evita que se seleccione texto al hacer doble clic */
+  
 }
 
 .card-cuerpo { 
@@ -382,10 +383,13 @@ input {
 
 .item-nombre { 
   font-weight: bold; /* Nombre de la herramienta en negrita */
-  font-size: 1rem; /* Tamaño estándar legible */
+  font-size: 1.5rem; /* Tamaño estándar legible */
   display: block; /* Ocupa su propia línea */
   margin-right: 25px; /* Deja espacio a la derecha para que el botón borrar no moleste */
   cursor: pointer; /* Cambia a mano indicando que se puede editar */
+  font-family: Sriracha;
+  font-style: italic;
+  text-decoration: underline;
 }
 
 .item-nombre:hover { 
