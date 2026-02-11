@@ -48,9 +48,9 @@
 
         <div id="overlay" onclick="toggleMenu()"></div>
 
-        <!-- CAPA DE CÁMARA (Para hacer fotos dentro de la app) -->
+        <!-- CAPA DE CÁMARA (Mejorado para evitar pantalla negra) -->
         <div id="camera-overlay" class="camera-overlay hidden">
-            <video id="video-stream" autoplay playsinline></video>
+            <video id="video-stream" autoplay playsinline muted></video>
             <div class="camera-controls">
                 <button onclick="capturarFoto()" class="btn-capture">📸 CAPTURAR</button>
                 <button onclick="cerrarCamara()" class="btn-close-cam">CANCELAR</button>
@@ -59,7 +59,7 @@
         </div>
 
         <main class="container">
-            <!-- Buscador y Filtros -->
+            <!-- Buscador Global Inventario -->
             <div id="busqueda-container" class="card hidden">
                 <input type="text" id="buscador" placeholder="🔍 Buscar herramienta..." oninput="renderizar()">
                 <div class="contenedor-filtros" id="filtros-categoria">
@@ -72,15 +72,8 @@
             </div>
 
             <!-- Secciones -->
-            <section id="screen-inicio" class="view">
-                <h2>📦<i> Stock y Ubicaciones</i></h2>
-                <div id="lista-total"></div>
-            </section>
-
-            <section id="screen-por-obra" class="view hidden">
-                <h2>🏗️<i> Herramientas por Obra</i></h2>
-                <div id="lista-por-obra"></div>
-            </section>
+            <section id="screen-inicio" class="view"><h2>📦<i> Stock y Ubicaciones</i></h2><div id="lista-total"></div></section>
+            <section id="screen-por-obra" class="view hidden"><h2>🏗️<i> Herramientas por Obra</i></h2><div id="lista-por-obra"></div></section>
 
             <!-- Pantalla Registro -->
             <section id="screen-nuevo" class="view hidden">
@@ -98,8 +91,13 @@
                     <input type="number" id="costo" placeholder="Costo total (€)" step="0.01">
                     <input type="number" id="stock-minimo" placeholder="Avisar si queda menos de... (Opcional)">
                     
-                    <label class="label-input">Foto de la Herramienta:</label>
-                    <button type="button" onclick="abrirCamara('preview-nueva')" class="btn-abrir-cam">📷 HACER FOTO AHORA</button>
+                    <label class="label-input">Imagen de la Herramienta:</label>
+                    <div class="grupo-botones-foto">
+                        <button type="button" onclick="abrirCamara('preview-nueva')" class="btn-abrir-cam">📸 CÁMARA</button>
+                        <button type="button" onclick="document.getElementById('input-galeria-nueva').click()" class="btn-galeria">🖼️ GALERÍA</button>
+                    </div>
+                    <input type="file" id="input-galeria-nueva" accept="image/*" class="hidden" onchange="procesarFotoGaleria(this, 'preview-nueva')">
+                    
                     <div id="preview-nueva" class="container-preview-form"></div>
                     
                     <label class="label-input">Fecha de compra:</label>
@@ -127,8 +125,13 @@
                     <label class="label-input">Stock Crítico (aviso):</label>
                     <input type="number" id="edit-stock-minimo">
                     
-                    <label class="label-input">Actualizar Foto:</label>
-                    <button type="button" onclick="abrirCamara('preview-editar')" class="btn-abrir-cam">📷 CAMBIAR FOTO</button>
+                    <label class="label-input">Actualizar Imagen:</label>
+                    <div class="grupo-botones-foto">
+                        <button type="button" onclick="abrirCamara('preview-editar')" class="btn-abrir-cam">📸 CÁMARA</button>
+                        <button type="button" onclick="document.getElementById('input-galeria-editar').click()" class="btn-galeria">🖼️ GALERÍA</button>
+                    </div>
+                    <input type="file" id="input-galeria-editar" accept="image/*" class="hidden" onchange="procesarFotoGaleria(this, 'preview-editar')">
+                    
                     <div id="preview-editar" class="container-preview-form"></div>
                     <button type="button" id="btn-borrar-foto-edit" onclick="eliminarFotoEdicion()" class="btn-borrar-foto-edit hidden">🗑️ Eliminar Foto Actual</button>
                     
@@ -142,7 +145,10 @@
 
             <section id="screen-historial" class="view hidden">
                 <h2>📜 Movimientos</h2>
-                <button onclick="borrarHistorial()" class="btn-borrar-hist">Limpiar Historial</button>
+                <div class="card">
+                    <input type="text" id="buscador-historial" placeholder="🔍 Buscar en movimientos..." oninput="renderizar()">
+                    <button onclick="borrarHistorial()" class="btn-borrar-hist" style="margin-bottom:0; margin-top:10px;">Limpiar Historial</button>
+                </div>
                 <div id="lista-historial"></div>
             </section>
         </main>

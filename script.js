@@ -19,23 +19,36 @@ let fotoMarcadaParaBorrar = false;
 let fotoCapturadaTemp = null; 
 let previewContainerActual = ""; 
 
-// --- SISTEMA DE CÁMARA (MediaDevices API) ---
+// --- SISTEMA DE CÁMARA (Mejorado para evitar pantalla negra) ---
 
 window.abrirCamara = async function(containerId) {
     previewContainerActual = containerId;
     const overlay = document.getElementById('camera-overlay');
     const video = document.getElementById('video-stream');
+    
     overlay.classList.remove('hidden');
 
+    const constraints = {
+        video: { 
+            facingMode: "environment", // Intentar cámara trasera
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        },
+        audio: false
+    };
+
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "environment" }, // Intenta abrir la cámara trasera
-            audio: false 
-        });
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         window.currentStream = stream;
+        
+        // Forzar la reproducción después de cargar los metadatos
+        video.onloadedmetadata = () => {
+            video.play().catch(e => console.error("Error al reproducir video:", e));
+        };
     } catch (err) {
-        alert("La cámara no está disponible. Asegúrate de estar en un sitio seguro (HTTPS).");
+        console.error("Error cámara:", err);
+        alert("No se pudo activar la cámara. Revisa los permisos o asegúrate de usar HTTPS.");
         cerrarCamara();
     }
 };
@@ -45,17 +58,17 @@ window.capturarFoto = function() {
     const canvas = document.getElementById('canvas-photo');
     const context = canvas.getContext('2d');
 
+    if (video.videoWidth === 0) {
+        alert("Esperando a que la cámara inicie...");
+        return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Guardamos la foto en una variable temporal comprimida
+    
     fotoCapturadaTemp = canvas.toDataURL('image/jpeg', 0.6);
-
-    // Pintamos la miniatura en el formulario
-    const container = document.getElementById(previewContainerActual);
-    container.innerHTML = `<img src="${fotoCapturadaTemp}" class="img-preview-form">`;
-
+    document.getElementById(previewContainerActual).innerHTML = `<img src="${fotoCapturadaTemp}" class="img-preview-form">`;
     cerrarCamara();
 };
 
@@ -66,8 +79,29 @@ window.cerrarCamara = function() {
     document.getElementById('camera-overlay').classList.add('hidden');
 };
 
-// --- SINCRONIZACIÓN FIREBASE ---
+window.procesarFotoGaleria = function(input, containerId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 400; 
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                fotoCapturadaTemp = canvas.toDataURL('image/jpeg', 0.6);
+                document.getElementById(containerId).innerHTML = `<img src="${fotoCapturadaTemp}" class="img-preview-form">`;
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
 
+// --- FIREBASE SYNC ---
 db.ref('/').on('value', (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -77,8 +111,7 @@ db.ref('/').on('value', (snapshot) => {
     }
 });
 
-// --- SESIÓN Y LOGIN ---
-
+// --- LOGIN ---
 window.onload = function() {
     if (localStorage.getItem('almacen_juanjo_login') === 'true') {
         document.getElementById('login-screen').classList.add('hidden');
@@ -108,8 +141,7 @@ window.cerrarSesion = function() {
     }
 };
 
-// --- ACCIONES DE INVENTARIO ---
-
+// --- ACCIONES ---
 document.getElementById('form-nuevo').addEventListener('submit', function(e) {
     e.preventDefault();
     const nombreInput = document.getElementById('nombre').value.trim();
@@ -153,13 +185,11 @@ window.abrirEditor = function(index) {
     const item = inventario[index];
     fotoMarcadaParaBorrar = false;
     fotoCapturadaTemp = null;
-    
     document.getElementById('edit-index').value = index;
     document.getElementById('edit-nombre').value = item.nombre;
     document.getElementById('edit-categoria').value = item.categoria || 'Manual';
     document.getElementById('edit-costo').value = item.costo;
     document.getElementById('edit-stock-minimo').value = item.stockMinimo || 0;
-    
     const previewCont = document.getElementById('preview-editar');
     previewCont.innerHTML = "";
     if (item.foto) {
@@ -168,7 +198,6 @@ window.abrirEditor = function(index) {
     } else {
         document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
     }
-    
     showScreen('editar');
 };
 
@@ -176,7 +205,7 @@ window.eliminarFotoEdicion = function() {
     if(confirm("¿Quitar la foto?")) {
         fotoMarcadaParaBorrar = true;
         document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
-        document.getElementById('preview-editar').innerHTML = "<p style='color:red; font-size:0.8rem;'>Foto eliminada. Guarda para confirmar.</p>";
+        document.getElementById('preview-editar').innerHTML = "<p style='color:red; font-size:0.8rem;'>Foto marcada para borrar.</p>";
     }
 };
 
@@ -184,24 +213,25 @@ document.getElementById('form-editar').addEventListener('submit', function(e) {
     e.preventDefault();
     const index = document.getElementById('edit-index').value;
     const item = inventario[index];
-    
     item.nombre = document.getElementById('edit-nombre').value.trim();
     item.categoria = document.getElementById('edit-categoria').value;
     item.costo = document.getElementById('edit-costo').value;
     item.stockMinimo = parseInt(document.getElementById('edit-stock-minimo').value) || 0;
-    
-    if (fotoCapturadaTemp) {
-        item.foto = fotoCapturadaTemp;
-    } else if (fotoMarcadaParaBorrar) {
-        delete item.foto;
-    }
-
+    if (fotoCapturadaTemp) item.foto = fotoCapturadaTemp;
+    else if (fotoMarcadaParaBorrar) delete item.foto;
     actualizarFirebase();
     fotoCapturadaTemp = null;
     showScreen('inicio');
 });
 
-// --- LÓGICA DE MOVIMIENTOS ---
+window.filtrarCategoria = function(cat) {
+    filtroCategoriaActual = cat;
+    document.querySelectorAll('.btn-filtro').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText === cat) btn.classList.add('active');
+    });
+    renderizar();
+};
 
 window.salidaObra = function(index) {
     let item = inventario[index];
@@ -248,7 +278,7 @@ function actualizarFirebase() {
 
 function anotarHistorial(nombre, accion) {
     historial.unshift({ fecha: new Date().toLocaleString(), nombre, accion });
-    if (historial.length > 50) historial.pop();
+    if (historial.length > 150) historial.pop();
 }
 
 function formatearFechaVisual(fechaStr) {
@@ -274,23 +304,17 @@ function showScreen(screenId) {
     renderizar();
 }
 
-window.filtrarCategoria = function(cat) {
-    filtroCategoriaActual = cat;
-    document.querySelectorAll('.btn-filtro').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.innerText === cat) btn.classList.add('active');
-    });
-    renderizar();
-};
-
 function renderizar() {
     const lTotal = document.getElementById('lista-total');
     const lSalida = document.getElementById('lista-salida');
     const lRegreso = document.getElementById('lista-regreso');
     const lHistorial = document.getElementById('lista-historial');
     const lPorObra = document.getElementById('lista-por-obra');
+    
     const buscador = document.getElementById('buscador');
     const filtroTexto = buscador ? buscador.value.toLowerCase() : '';
+    const buscadorHist = document.getElementById('buscador-historial');
+    const filtroHist = buscadorHist ? buscadorHist.value.toLowerCase() : '';
 
     if (!lTotal || document.getElementById('app-container').classList.contains('hidden')) return;
 
@@ -306,12 +330,10 @@ function renderizar() {
         let esCritico = (item.stockMinimo && cantAlmacen <= item.stockMinimo);
         let estiloNombre = esCritico ? 'color: #e74c3c; font-weight: 900; animation: blink 1s infinite;' : '';
         let avisoCritico = esCritico ? '<br><small style="color:red">⚠️ ¡REPOSICIÓN NECESARIA!</small>' : '';
-
         let fotoHTML = item.foto ? `<img src="${item.foto}" class="item-foto">` : `<div class="item-foto-vacia">📷</div>`;
 
         let badgesHTML = '';
         let badgesRegresoHTML = ''; 
-
         for (let loc in item.ubicaciones) {
             let cant = item.ubicaciones[loc];
             if (cant > 0 || loc === "Almacén") {
@@ -330,45 +352,20 @@ function renderizar() {
             }
         }
 
-        const btnSalidaHTML = `<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button>`;
-        const categoriaLabel = `<span class="tag-categoria">${item.categoria || 'Manual'}</span>`;
-
-        const cuerpoCard = `
-            <div class="card-cuerpo">
-                ${fotoHTML}
-                <div class="card-info">
-                    ${categoriaLabel}
-                    <span class="item-nombre" style="${estiloNombre}">${item.nombre} ${avisoCritico}</span>
-                    <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
-                    ${badgesHTML}
-                </div>
-            </div>
-        `;
-
+        const cuerpoCard = `<div class="card-cuerpo">${fotoHTML}<div class="card-info"><span class="tag-categoria">${item.categoria || 'Manual'}</span><span class="item-nombre" style="${estiloNombre}">${item.nombre} ${avisoCritico}</span><div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>${badgesHTML}</div></div>`;
         lTotal.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}<button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button></div>`;
-        lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}${btnSalidaHTML}</div>`;
-        lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">
-            <div class="card-cuerpo">
-                ${fotoHTML}
-                <div class="card-info">
-                    ${categoriaLabel}
-                    <span class="item-nombre" style="${estiloNombre}">${item.nombre}</span>
-                    <div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>
-                    ${badgesRegresoHTML}
-                </div>
-            </div>
-        </div>`; 
+        lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button></div>`;
+        lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${fotoHTML}<div class="card-info"><span class="tag-categoria">${item.categoria || 'Manual'}</span><span class="item-nombre" style="${estiloNombre}">${item.nombre}</span><div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>${badgesRegresoHTML}</div></div></div>`; 
     });
 
     for (let obra in obrasEncontradas) {
-        lPorObra.innerHTML += `<div class="item-card" style="border-left: 6px solid #f1c40f">
-            <span class="item-nombre">📍 Obra: ${obra}</span>
-            Contenido: <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul>
-        </div>`;
+        lPorObra.innerHTML += `<div class="item-card" style="border-left: 6px solid #f1c40f"><span class="item-nombre">📍 Obra: ${obra}</span>Contenido: <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul></div>`;
     }
 
     historial.forEach(h => {
-        lHistorial.innerHTML += `<div class="hist-item"><span class="hist-fecha">${h.fecha}</span><br><strong>${h.nombre}</strong>: ${h.accion}</div>`;
+        if (h.nombre.toLowerCase().includes(filtroHist) || h.accion.toLowerCase().includes(filtroHist)) {
+            lHistorial.innerHTML += `<div class="hist-item"><span class="hist-fecha">${h.fecha}</span><br><strong>${h.nombre}</strong>: ${h.accion}</div>`;
+        }
     });
 }
 
@@ -389,7 +386,7 @@ function exportarExcel() {
 }
 
 window.borrarHistorial = function() {
-    if(confirm("¿Limpiar historial?")) {
+    if(confirm("¿Limpiar historial de la nube definitivamente?")) {
         historial = [];
         actualizarFirebase();
     }

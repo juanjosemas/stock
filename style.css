@@ -1,517 +1,539 @@
-/* --- General --- */
+/* --- Estilos Generales --- */
 * { 
-  box-sizing: border-box; /* El ancho incluye el relleno y el borde para que no desborde */
+  box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total para que nada desborde */
 }
 
 body { 
-  font-family: 'Segoe UI', sans-serif; /* Fuente base de la aplicación */
-  margin: 0; /* Elimina márgenes exteriores del navegador */
-  background: #f0f2f5; /* Color gris suave de fondo */
-  color: #1c1e21; /* Color de texto principal */
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con capa suave */
-  background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-position: center center; /* Centra la imagen en la pantalla */
-    background-attachment: fixed; /* La imagen se queda quieta al hacer scroll */
-    background-size: cover; /* La imagen cubre todo el ancho y alto disponible */
+  font-family: 'Segoe UI', sans-serif; /* Establece la fuente principal de la aplicación */
+  margin: 0; /* Elimina los márgenes exteriores por defecto del navegador */
+  background: #f0f2f5; /* Color de fondo gris claro para las zonas sin imagen */
+  color: #1c1e21; /* Color de texto principal casi negro para mejor lectura */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con una capa blanquecina muy suave */
+  background-repeat: no-repeat; /* Evita que la imagen se repita como un mosaico */
+  background-position: center center; /* Centra la imagen de fondo tanto horizontal como verticalmente */
+  background-attachment: fixed; /* La imagen se queda quieta al hacer scroll, creando un efecto profesional */
+  background-size: cover; /* La imagen se estira para cubrir toda la pantalla siempre */
 }
 
 h2 {
-  font-family: Lobster; /* Fuente decorativa para títulos */
-  text-decoration: underline; /* Subrayado decorativo */
+  font-family: Lobster; /* Fuente decorativa para los títulos de sección */
+  text-decoration: underline; /* Subrayado decorativo para los encabezados */
 }
 
-/* --- Pantalla de Login --- */
+/* --- Pantalla de Inicio de Sesión (Login) --- */
 .login-container {
-  display: flex; /* Uso de flexbox para centrar contenido */
-  justify-content: center; /* Centrado horizontal */
-  align-items: center; /* Centrado vertical */
-  height: 100vh; /* Ocupa todo el alto de la pantalla */
-  background: #2c3e50; /* Fondo azul oscuro igual que la cabecera */
-  padding: 20px; /* Espaciado lateral para móviles */
+  display: flex; /* Activa el modo flexible para centrar el contenido */
+  justify-content: center; /* Centra la tarjeta horizontalmente */
+  align-items: center; /* Centra la tarjeta verticalmente */
+  height: 100vh; /* Ocupa el 100% de la altura de la pantalla del dispositivo */
+  background: #2c3e50; /* Fondo azul oscuro que tapa la imagen de fondo en el login */
+  padding: 20px; /* Margen interno para que en móviles no pegue a los bordes */
 }
 
 .login-card {
-  width: 100%; /* Ancho completo */
-  max-width: 350px; /* Tamaño máximo de la tarjeta de acceso */
-  text-align: center; /* Texto centrado */
-  padding: 30px !important; /* Relleno interno extra */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  max-width: 350px; /* Pero no deja que crezca más de 350px para que se vea bien */
+  text-align: center; /* Centra todos los textos e inputs dentro de la tarjeta */
+  padding: 30px !important; /* Relleno interno extra para dar aire al formulario */
 }
 
 .logo-login {
-  font-size: 2rem; /* Tamaño grande para el logo */
+  font-size: 2rem; /* Tamaño de letra grande para el nombre de la empresa */
   font-weight: bold; /* Texto en negrita */
-  color: #2c3e50; /* Color azul oscuro */
-  margin-bottom: 20px; /* Espacio inferior */
-  font-family: Lobster; /* Tu fuente decorativa */
+  color: #2c3e50; /* Color azul oscuro para el texto */
+  margin-bottom: 20px; /* Espacio debajo del logo */
+  font-family: Lobster; /* Fuente personalizada igual que los títulos */
 }
 
 .error-text {
-  color: #e74c3c; /* Color rojo para errores */
-  font-size: 0.9rem; /* Letra algo más pequeña */
-  margin-top: 10px; /* Espacio superior */
-  font-weight: bold; /* Resaltado */
+  color: #e74c3c; /* Color rojo vibrante para indicar error */
+  font-size: 0.9rem; /* Letra un poco más pequeña */
+  margin-top: 10px; /* Espacio arriba del mensaje de error */
+  font-weight: bold; /* Resaltado de importancia */
 }
 
-/* --- Barra Superior --- */
+/* --- Barra Superior (Top Bar) --- */
 .top-bar { 
-  background: #2c3e50; /* Azul oscuro para la cabecera */
-  color: white; /* Texto en blanco */
-  height: 60px; /* Altura fija de la barra */
-  display: flex; /* Alineación flexible de elementos */
-  align-items: center; /* Centrado vertical de logo e icono */
-  padding: 0 15px; /* Espaciado a los lados */
-  position: sticky; /* Se queda pegada arriba al hacer scroll */
-  top: 0; /* Posición cero respecto al techo */
-  z-index: 100; /* Prioridad de visualización sobre el contenido */
+  background: #2c3e50; /* Fondo azul oscuro igual que el login */
+  color: white; /* Texto en color blanco */
+  height: 60px; /* Altura fija de la barra superior */
+  display: flex; /* Permite alinear los elementos en fila */
+  align-items: center; /* Centra verticalmente el logo y el menú */
+  padding: 0 15px; /* Espaciado lateral */
+  position: sticky; /* Se queda pegada arriba aunque bajes la página */
+  top: 0; /* Posición cero respecto al techo de la pantalla */
+  z-index: 100; /* Prioridad de visualización para que nada pase por encima */
 }
 
 .menu-trigger { 
-  font-size: 24px; /* Tamaño del icono hamburguesa */
-  cursor: pointer; /* Cambia el puntero al pasar por encima */
-  margin-right: 15px; /* Separación con el logo */
+  font-size: 24px; /* Tamaño del icono de tres rayas (hamburguesa) */
+  cursor: pointer; /* Cambia el ratón por una mano al pasar por encima */
+  margin-right: 15px; /* Separación con el texto del logo */
 }
 
 .logo { 
-  font-weight: bold; /* Logo resaltado en negrita */
-  font-size: 1.2rem; /* Tamaño de letra del logo */
-  white-space: nowrap; /* Evita que el nombre se rompa en varias líneas */
+  font-weight: bold; /* Nombre de la empresa en negrita */
+  font-size: 1.2rem; /* Tamaño de letra destacado */
+  white-space: nowrap; /* Evita que el nombre se rompa en dos líneas */
 }
 
 .ico { 
-  border-radius: 50%; /* Forma circular para la imagen */
-  margin: 8px 8px 8px 80px; /* Margen para posicionarla a la derecha */
-  animation: logo 3s ease-in-out; /* Aplica la animación definida abajo */
-  background-color: black; /* Fondo negro tras la imagen */
+  border-radius: 50%; /* Hace que la imagen del icono de Juanjo sea redonda */
+  margin: 8px 8px 8px 80px; /* Margen derecho de 80px para posicionarlo según tu gusto */
+  animation: logo 3s ease-in-out; /* Aplica la animación de rotación al cargar */
+  background-color: black; /* Fondo negro detrás de la imagen por si es transparente */
   border: 2px solid red; /* Borde rojo circular */
-  vertical-align: middle; /* Alineación vertical con el texto */
+  vertical-align: middle; /* Alinea la imagen con el texto de al lado */
 }
 
 @keyframes logo { 
-  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Inicia pequeño */
-  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina rotado */
+  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Empieza invisible, pequeña y sin rotar */
+  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina visible y habiendo dado 4 vueltas */
 }
 
-/* Animación de parpadeo para el stock crítico */
+/* Animación de aviso para Stock Crítico */
 @keyframes blink {
-  0% { opacity: 1; } /* Estado inicial visible */
-  50% { opacity: 0.6; } /* Estado medio algo transparente */
+  0% { opacity: 1; } /* Totalmente visible */
+  50% { opacity: 0.6; } /* Casi transparente */
   100% { opacity: 1; } /* Vuelve a ser visible */
 }
 
-/* --- SISTEMA DE CÁMARA --- */
+/* --- Sistema de Cámara Interna --- */
 .camera-overlay {
-  position: fixed; /* Ocupa toda la pantalla flotando */
-  top: 0; /* Alineado arriba */
-  left: 0; /* Alineado a la izquierda */
-  width: 100%; /* Ancho total */
-  height: 100%; /* Alto total */
-  background: black; /* Fondo negro para resaltar el vídeo */
-  z-index: 1000; /* Por encima de cualquier otro elemento */
-  display: flex; /* Para centrar el vídeo y botones */
-  flex-direction: column; /* Elementos uno debajo de otro */
+  position: fixed; /* Flota sobre toda la pantalla */
+  top: 0; /* Al borde superior */
+  left: 0; /* Al borde izquierdo */
+  width: 100%; /* Ancho total de la pantalla */
+  height: 100%; /* Alto total de la pantalla */
+  background: black; /* Fondo negro para que parezca una app de cámara */
+  z-index: 1000; /* Por encima de cualquier menú o tarjeta */
+  display: flex; /* Activa flexbox para centrar visor y botones */
+  flex-direction: column; /* Apila el vídeo arriba y los botones abajo */
   align-items: center; /* Centrado horizontal */
   justify-content: center; /* Centrado vertical */
 }
 
 #video-stream {
-  width: 100%; /* El vídeo ocupa todo el ancho */
-  max-height: 80vh; /* Altura máxima para dejar sitio a botones */
-  background: #222; /* Fondo oscuro mientras carga */
-  border: 2px solid #3498db; /* Borde azul para el visor */
+  width: 100%; /* El visor ocupa todo el ancho */
+  max-height: 80vh; /* Pero deja un 20% de espacio abajo para los botones */
+  background: #222; /* Fondo oscuro mientras se enciende el visor */
+  border: 2px solid #3498db; /* Borde azul para el visor de cámara */
 }
 
 .camera-controls {
-  padding: 20px; /* Espacio alrededor de los botones */
-  display: flex; /* Botones en una fila */
-  gap: 20px; /* Espacio entre botones */
+  padding: 20px; /* Espacio para que los botones se vean bien */
+  display: flex; /* Alinea los botones en fila */
+  gap: 20px; /* Separación entre el botón capturar y cancelar */
 }
 
 .btn-capture {
-  background: #e74c3c; /* Rojo para el botón de disparo */
+  background: #e74c3c; /* Color rojo para el botón de disparo */
   color: white; /* Texto blanco */
-  padding: 15px 30px; /* Tamaño grande para tocar fácil */
-  border: 5px solid rgba(255,255,255,0.3); /* Borde tipo lente */
-  border-radius: 50px; /* Forma redondeada */
+  padding: 15px 30px; /* Tamaño grande para pulsar fácil con el dedo */
+  border: 5px solid rgba(255,255,255,0.3); /* Borde estético tipo objetivo de cámara */
+  border-radius: 50px; /* Botón totalmente redondo en las esquinas */
   font-weight: bold; /* Texto resaltado */
-  cursor: pointer; /* Mano al pasar */
+  cursor: pointer; /* Icono de mano al pasar */
 }
 
 .btn-close-cam {
-  background: #666; /* Gris para el botón de cancelar */
-  color: white; /* Texto blanco */
-  padding: 10px 20px; /* Tamaño estándar */
-  border: none; /* Sin borde */
-  border-radius: 6px; /* Redondeo suave */
-  cursor: pointer; /* Mano al pasar */
+  background: #666; /* Color gris para el botón de cancelar */
+  color: white; /* Letra blanca */
+  padding: 10px 20px; /* Tamaño estándar de botón */
+  border: none; /* Sin bordes */
+  border-radius: 6px; /* Redondeo de esquinas */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-abrir-cam {
-  width: 100%; /* Botón de ancho completo en el formulario */
-  background: #3498db; /* Azul para llamar a la acción */
-  color: white; /* Texto blanco */
+  flex: 1; /* Hace que el botón de cámara ocupe la mitad del ancho del grupo */
+  background: #3498db; /* Color azul para destacar la acción de foto */
+  color: white; /* Texto en blanco */
   padding: 12px; /* Relleno interno */
-  border: none; /* Sin borde */
-  border-radius: 6px; /* Redondeo suave */
-  font-weight: bold; /* Texto resaltado */
-  margin-bottom: 10px; /* Separación con el siguiente elemento */
-  cursor: pointer; /* Mano al pasar */
+  border: none; /* Sin bordes */
+  border-radius: 6px; /* Esquinas suavizadas */
+  font-weight: bold; /* Texto en negrita */
+  cursor: pointer; /* Icono de mano */
 }
 
-/* --- Menú Lateral --- */
+/* --- Botones de Imágenes en Formularios --- */
+.grupo-botones-foto {
+  display: flex; /* Alinea el botón Cámara y Galería en la misma línea */
+  gap: 10px; /* Espacio de separación entre los dos botones */
+  margin-bottom: 10px; /* Espacio con el elemento de abajo */
+}
+
+.btn-galeria {
+  flex: 1; /* Hace que el botón de galería ocupe la otra mitad del ancho */
+  background: #f39c12; /* Color naranja para diferenciarlo de la cámara */
+  color: white; /* Texto en blanco */
+  padding: 12px; /* Relleno interno igual al de cámara */
+  border: none; /* Sin bordes */
+  border-radius: 6px; /* Esquinas suavizadas */
+  font-weight: bold; /* Texto en negrita */
+  cursor: pointer; /* Icono de mano */
+}
+
+/* --- Menú Lateral (Sidebar) --- */
 .sidebar { 
-  position: fixed; /* Flotante a la izquierda */
-  left: -250px; /* Escondido por defecto */
-  top: 0; /* Al techo */
-  width: 200px; /* Ancho del menú */
-  height: 100%; /* Alto total */
-  background: #fff; /* Fondo blanco */
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra para profundidad */
-  transition: 0.3s; /* Animación de apertura suave */
-  z-index: 200; /* Por encima del contenido normal */
+  position: fixed; /* Menú flotante lateral */
+  left: -250px; /* Escondido por defecto fuera de la pantalla (izquierda) */
+  top: 0; /* Pegado al borde superior */
+  width: 200px; /* Ancho del menú desplegable */
+  height: 100%; /* Ocupa todo el alto de la pantalla */
+  background: #fff; /* Fondo blanco para las opciones */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra a la derecha para dar profundidad */
+  transition: 0.3s; /* Velocidad de la animación al salir o entrar */
+  z-index: 200; /* Por encima de la barra superior */
   padding-top: 20px; /* Espacio superior */
-  font-style: italic; /* Texto en cursiva */
-  font-family: Sriracha; /* Tu fuente personalizada */
+  font-style: italic; /* Texto en cursiva según tu diseño */
+  font-family: Sriracha; /* Tu fuente personalizada para el menú */
 }
 
 .sidebar.active { 
-  left: 0; /* Se muestra al activarse */
+  left: 0; /* Se mueve a la posición visible al activarlo */
 }
 
 .sidebar-header { 
-  padding: 15px; /* Relleno interno */
-  font-weight: bold; /* Negrita */
+  padding: 15px; /* Margen interno */
+  font-weight: bold; /* Texto en negrita */
   border-bottom: 1px solid #eee; /* Línea divisoria inferior */
   margin-bottom: 10px; /* Espacio antes de los enlaces */
-  color: #2c3e50; /* Color azul para el título */
+  color: #2c3e50; /* Color azul para el título Gestión */
   text-align: center; /* Texto centrado */
-  font-family: Piedra; /* Tu fuente para el título */
+  font-family: Piedra; /* Tu fuente del título */
 }
 
 .sidebar a { 
-  display: block; /* Cada enlace en su propia línea */
-  padding: 15px; /* Espacio grande para tocar con el dedo */
+  display: block; /* Cada enlace ocupa toda la línea */
+  padding: 15px; /* Espacio grande para facilidad táctil */
   color: #333; /* Color de texto gris oscuro */
-  text-decoration: none; /* Sin subrayado */
-  border-bottom: 1px solid #f9f9f9; /* Separación sutil */
+  text-decoration: none; /* Elimina el subrayado de los links */
+  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre opciones */
 }
 
 .btn-exportar-menu { 
-  background: #d4edda; /* Verde suave para exportar */
-  color: #155724 !important; /* Texto verde oscuro */
-  font-weight: bold; /* Negrita */
+  background: #d4edda; /* Color verde muy suave para exportación */
+  color: #155724 !important; /* Texto verde oscuro resaltado */
+  font-weight: bold; /* Texto en negrita */
 }
 
 .btn-logout-menu { 
-  background: #f8d7da; /* Rojo suave para logout */
-  color: #721c24 !important; /* Texto rojo oscuro */
-  font-weight: bold; /* Negrita */
-  margin-top: 20px; /* Separación superior */
+  background: #f8d7da; /* Color rojo suave para el cierre de sesión */
+  color: #721c24 !important; /* Texto rojo oscuro resaltado */
+  font-weight: bold; /* Texto en negrita */
+  margin-top: 20px; /* Separación superior extra */
 }
 
-/* --- Capa Oscura Overlay --- */
+/* Capa Oscura del Menú (Overlay) */
 #overlay { 
   display: none; /* Oculto por defecto */
   position: fixed; /* Fijo cubriendo todo */
-  top: 0; /* Al techo */
-  left: 0; /* A la pared izquierda */
-  width: 100%; /* Ancho total */
-  height: 100%; /* Alto total */
-  background: rgba(0,0,0,0.5); /* Negro transparente */
-  z-index: 150; /* Entre el contenido y el menú */
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.5); /* Color negro con transparencia al 50% */
+  z-index: 150; /* Entre las tarjetas y el menú lateral */
 }
 
 #overlay.active { 
-  display: block; /* Se muestra al abrir el menú */
+  display: block; /* Se muestra cuando abrimos el menú */
 }
 
-/* --- Contenedores y Vistas --- */
+/* --- Contenedores de Pantallas y Tarjetas --- */
 .container { 
-  padding: 15px; /* Espacio interno lateral */
+  padding: 15px; /* Margen interno lateral para que el contenido no pegue al borde */
 }
 
 .view { 
-  animation: fadeIn 0.3s; /* Aparece suavemente */
+  animation: fadeIn 0.3s; /* Aparece suavemente al cambiar de sección */
 }
 
 .hidden { 
-  display: none; /* Oculta elementos */
+  display: none; /* Oculta elementos que no se deben ver ahora */
 }
 
 @keyframes fadeIn { 
-  from { opacity: 0; } /* Inicia invisible */
+  from { opacity: 0; } /* Empieza invisible */
   to { opacity: 1; } /* Termina visible */
 }
 
-/* --- Tarjetas (Cards) --- */
 .card { 
-  background: white; /* Fondo blanco */
-  padding: 12px; /* Espacio interno */
-  border-radius: 8px; /* Redondeo de esquinas */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
-  margin-bottom: 15px; /* Espacio debajo de la tarjeta */
+  background: white; /* Fondo blanco limpio para los formularios */
+  padding: 12px; /* Relleno interno */
+  border-radius: 8px; /* Esquinas redondeadas */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para dar relieve */
+  margin-bottom: 15px; /* Espacio inferior con el siguiente bloque */
 }
 
 input { 
-  width: 100%; /* Ancho total */
-  padding: 12px; /* Espacio para escribir */
+  width: 100%; /* Ocupa todo el ancho de su contenedor */
+  padding: 12px; /* Relleno para que sea fácil escribir */
   margin-bottom: 10px; /* Separación con el siguiente campo */
-  border: 1px solid #ddd; /* Borde gris claro */
-  border-radius: 6px; /* Redondeo de esquinas */
-  font-size: 16px; /* Texto grande para leer bien */
+  border: 1px solid #ddd; /* Borde gris claro sutil */
+  border-radius: 6px; /* Redondeo leve de esquinas */
+  font-size: 16px; /* Tamaño de letra grande para que se lea bien en móviles */
 }
 
 .input-select { 
-  width: 100%; /* Ancho total del desplegable */
+  width: 100%; /* Ancho total para el desplegable de categorías */
   padding: 12px; /* Relleno interno */
   margin-bottom: 10px; /* Separación inferior */
   border: 1px solid #ddd; /* Borde gris claro */
-  border-radius: 6px; /* Redondeo */
-  font-size: 16px; /* Texto legible */
+  border-radius: 6px; /* Esquinas redondeadas */
+  font-size: 16px; /* Tamaño de letra legible */
   background: white; /* Fondo blanco */
 }
 
-/* --- Filtros de Categoría --- */
+/* --- Filtros de Categoría Superior --- */
 .contenedor-filtros { 
-  display: flex; /* Botones en fila */
-  overflow-x: auto; /* Scroll si no caben todos */
-  gap: 8px; /* Espacio entre botones */
-  margin-top: 10px; /* Separación superior */
-  padding-bottom: 5px; /* Espacio para el dedo al scrollear */
+  display: flex; /* Coloca los botones en línea */
+  overflow-x: auto; /* Permite deslizar a los lados si hay muchos filtros */
+  gap: 8px; /* Espacio entre los botones de filtro */
+  margin-top: 10px; /* Separación con el buscador */
+  padding-bottom: 5px; /* Espacio para que el scroll no tape el botón */
 }
 
 .btn-filtro { 
-  background: #eee; /* Gris claro por defecto */
-  border: none; /* Sin borde */
-  padding: 6px 12px; /* Relleno interno */
-  border-radius: 20px; /* Forma de píldora */
+  background: #eee; /* Color gris claro por defecto */
+  border: none; /* Sin bordes */
+  padding: 6px 12px; /* Relleno tipo píldora */
+  border-radius: 20px; /* Forma de pastilla redondeada */
   font-size: 0.75rem; /* Texto pequeño */
-  white-space: nowrap; /* No rompe la palabra */
-  cursor: pointer; /* Mano al pasar */
+  white-space: nowrap; /* Evita que el texto del botón se parta en dos */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-filtro.active { 
-  background: #3498db; /* Azul si está seleccionado */
-  color: white; /* Texto blanco */
-  font-weight: bold; /* Negrita */
+  background: #3498db; /* Azul corporativo para indicar filtro seleccionado */
+  color: white; /* Letra blanca para contrastar */
+  font-weight: bold; /* Texto en negrita */
 }
 
 .tag-categoria { 
-  font-size: 0.6rem; /* Texto minúsculo */
-  background: #f0f2f5; /* Gris suave neutro */
-  color: #555; /* Texto gris */
-  padding: 2px 5px; /* Relleno mini */
+  font-size: 0.6rem; /* Letra muy pequeña para la etiqueta de la tarjeta */
+  background: #f0f2f5; /* Fondo gris neutro suave */
+  color: #555; /* Letra gris oscura */
+  padding: 2px 5px; /* Espaciado mínimo */
   border-radius: 4px; /* Redondeo leve */
-  display: inline-block; /* Ocupa solo su espacio */
-  margin-bottom: 4px; /* Separación con el nombre */
-  text-transform: uppercase; /* Siempre en mayúsculas */
+  display: inline-block; /* Ocupa solo el espacio de su texto */
+  margin-bottom: 4px; /* Separación con el nombre de la herramienta */
+  text-transform: uppercase; /* Pone el texto en mayúsculas automáticamente */
 }
 
-/* --- Vistas Previas de Imagen --- */
+/* --- Miniaturas de Foto en Formularios --- */
 .container-preview-form { 
-  text-align: center; /* Centra la miniatura */
+  text-align: center; /* Centra la foto que acabamos de hacer */
   margin-bottom: 10px; /* Espacio inferior */
 }
 
 .img-preview-form { 
-  max-width: 100px; /* Ancho máximo controlado */
-  height: auto; /* Proporcional */
-  border-radius: 8px; /* Redondeo */
-  border: 2px solid #3498db; /* Borde azul para destacar */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+  max-width: 100px; /* Ancho máximo de la miniatura para no estirar el formulario */
+  height: auto; /* Mantiene la proporción de la imagen */
+  border-radius: 8px; /* Redondeo de la foto previsualizada */
+  border: 2px solid #3498db; /* Borde azul para destacar que la foto está cargada */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
 }
 
-/* --- Tarjetas de Inventario (Item Card) --- */
+/* --- Tarjetas de Herramientas (Item Cards) --- */
 .item-card { 
   background: white; /* Fondo blanco */
-  padding: 12px; /* Relleno interno */
-  border-radius: 10px; /* Esquinas muy redondeadas */
-  margin-bottom: 10px; /* Separación entre fichas */
-  border-left: 6px solid #3498db; /* Franja azul corporativa */
+  padding: 12px; /* Espacio interno de la ficha */
+  border-radius: 10px; /* Esquinas muy redondeadas para un look moderno */
+  margin-bottom: 10px; /* Separación entre cada herramienta de la lista */
+  border-left: 6px solid #3498db; /* Franja azul distintiva a la izquierda */
   position: relative; /* Base para el botón de borrar absoluto */
-  user-select: none; /* No deja seleccionar texto al hacer doble clic */
+  user-select: none; /* Evita que se seleccione texto al hacer doble clic */
 }
 
 .card-cuerpo { 
-  display: flex; /* Foto a la izquierda, info a la derecha */
-  align-items: flex-start; /* Alineado al techo de la tarjeta */
-  gap: 12px; /* Separación entre foto e información */
+  display: flex; /* Foto a la izquierda, información a la derecha */
+  align-items: flex-start; /* Alinea los elementos al techo de la tarjeta */
+  gap: 12px; /* Separación entre la imagen y el texto */
 }
 
 .item-foto { 
-  width: 65px; /* Ancho fijo de miniatura */
-  height: 65px; /* Alto fijo de miniatura */
-  object-fit: cover; /* Ajusta la imagen al cuadrado sin deformar */
-  border-radius: 8px; /* Redondeo de foto */
+  width: 65px; /* Ancho fijo para todas las miniaturas de la lista */
+  height: 65px; /* Alto fijo para todas las miniaturas de la lista */
+  object-fit: cover; /* Recorta la imagen para que rellene el cuadrado sin deformarse */
+  border-radius: 8px; /* Redondeo de la foto */
   border: 1px solid #ddd; /* Borde gris fino */
-  flex-shrink: 0; /* Evita que la foto se aplaste */
+  flex-shrink: 0; /* Evita que la foto se aplaste si hay mucho texto al lado */
 }
 
 .item-foto-vacia { 
-  width: 65px; /* Mismo ancho que la foto */
-  height: 65px; /* Mismo alto que la foto */
-  background: #f9f9f9; /* Gris muy claro */
+  width: 65px; /* Mismo tamaño que la foto */
+  height: 65px; /* Mismo tamaño que la foto */
+  background: #f9f9f9; /* Fondo gris casi blanco para el hueco sin foto */
   display: flex; /* Para centrar el icono de cámara */
-  justify-content: center; /* Centrado horizontal */
-  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal del icono */
+  align-items: center; /* Centrado vertical del icono */
   border-radius: 8px; /* Redondeo */
-  border: 1px dashed #ccc; /* Borde discontinuo gris */
-  color: #bbb; /* Icono gris claro */
+  border: 1px dashed #ccc; /* Borde con puntitos gris */
+  color: #bbb; /* Color de icono de cámara gris suave */
   font-size: 1.2rem; /* Tamaño del icono */
-  flex-shrink: 0; /* No se aplasta */
+  flex-shrink: 0; /* Evita deformación */
 }
 
 .card-info { 
-  flex-grow: 1; /* El texto ocupa todo el espacio que queda */
+  flex-grow: 1; /* El bloque de texto ocupa todo el espacio que sobra a la derecha */
 }
 
 .item-nombre { 
-  font-weight: bold; /* Nombre en negrita */
-  font-size: 1rem; /* Tamaño estándar */
-  display: block; /* En su propia línea */
-  margin-right: 25px; /* Margen para que el botón borrar no lo pise */
-  cursor: pointer; /* Mano al pasar */
+  font-weight: bold; /* Nombre de la herramienta en negrita */
+  font-size: 1rem; /* Tamaño estándar legible */
+  display: block; /* Ocupa su propia línea */
+  margin-right: 25px; /* Deja espacio a la derecha para que el botón borrar no moleste */
+  cursor: pointer; /* Cambia a mano indicando que se puede editar */
 }
 
 .item-nombre:hover { 
-  color: #3498db; /* Cambia a azul al pasar el ratón */
+  color: #3498db; /* Cambia a color azul al pasar el ratón por encima */
 }
 
 .info-stock { 
-  font-size: 0.75rem; /* Letra pequeña informativa */
-  color: #666; /* Gris medio */
+  font-size: 0.75rem; /* Tamaño de letra pequeño para datos de coste y fecha */
+  color: #666; /* Gris intermedio para menor peso visual */
   margin: 3px 0; /* Separación vertical */
 }
 
+/* Etiquetas de Ubicación (Badges) */
 .badge-obra { 
-  display: inline-block; /* Ocupa solo el ancho del texto */
-  background: #fff3cd; /* Fondo amarillo obra */
-  color: #856404; /* Texto marrón legible */
+  display: inline-block; /* Se adapta al ancho del texto contenido */
+  background: #fff3cd; /* Fondo amarillo claro tipo obra */
+  color: #856404; /* Texto marrón oscuro para lectura fácil */
   padding: 2px 6px; /* Relleno compacto */
-  border-radius: 4px; /* Redondeo suave */
-  font-size: 0.7rem; /* Texto minúsculo */
+  border-radius: 4px; /* Esquinas levemente redondeadas */
+  font-size: 0.7rem; /* Letra minúscula */
   margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral entre badges */
+  margin-right: 4px; /* Separación lateral con otras etiquetas */
   border: 1px solid #ffeeba; /* Borde sutil amarillo */
 }
 
 .badge-almacen { 
-  display: inline-block; /* Ocupa solo el ancho del texto */
-  background: #d4edda; /* Fondo verde almacén */
-  color: #155724; /* Texto verde oscuro legible */
+  display: inline-block; /* Se adapta al texto */
+  background: #d4edda; /* Fondo verde claro tipo almacén */
+  color: #155724; /* Texto verde oscuro */
   padding: 2px 6px; /* Relleno compacto */
   border-radius: 4px; /* Redondeo suave */
-  font-size: 0.7rem; /* Texto minúsculo */
+  font-size: 0.7rem; /* Letra minúscula */
   margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral entre badges */
+  margin-right: 4px; /* Separación lateral */
   border: 1px solid #c3e6cb; /* Borde sutil verde */
 }
 
-/* --- Controles de Retorno --- */
+/* --- Controles de Retorno a Almacén --- */
 .fila-regreso { 
-  display: flex; /* Badge y botón de devolver en línea */
+  display: flex; /* Pone el nombre de obra y el botón Devolver en la misma línea */
   align-items: center; /* Centrado vertical */
-  gap: 5px; /* Separación mínima */
-  margin-top: 3px; /* Separación con la línea superior */
+  gap: 5px; /* Separación mínima entre badge y botón */
+  margin-top: 3px; /* Separación superior */
 }
 
 .btn-mini-regreso { 
-  background: #3498db; /* Azul para retorno */
-  color: white; /* Blanco */
+  background: #3498db; /* Color azul para el botón de devolver */
+  color: white; /* Letra blanca */
   border: none; /* Sin bordes */
-  padding: 2px 5px; /* Tamaño mínimo */
-  border-radius: 4px; /* Redondeo leve */
-  font-size: 0.65rem; /* Texto muy pequeño */
-  font-weight: bold; /* Negrita */
-  cursor: pointer; /* Mano al pasar */
+  padding: 2px 5px; /* Tamaño muy reducido y compacto */
+  border-radius: 4px; /* Esquinas suavizadas */
+  font-size: 0.65rem; /* Letra muy pequeña */
+  font-weight: bold; /* Texto resaltado */
+  cursor: pointer; /* Icono de mano */
 }
 
-/* --- Botones de Acción --- */
+/* --- Botones de Acción Globales --- */
 .btn-save { 
-  width: 100%; /* Ancho total del formulario */
-  background: #28a745; /* Verde para guardar */
-  color: white; /* Blanco */
+  width: 100%; /* Botón de ancho completo para los formularios */
+  background: #28a745; /* Verde corporativo de guardar */
+  color: white; /* Texto blanco */
   border: none; /* Sin bordes */
-  padding: 15px; /* Grande para móviles */
-  border-radius: 6px; /* Redondeo */
-  font-weight: bold; /* Negrita */
-  cursor: pointer; /* Mano al pasar */
+  padding: 15px; /* Área de pulsación muy cómoda para dedos en móvil */
+  border-radius: 6px; /* Redondeo suave */
+  font-weight: bold; /* Texto en negrita */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-enviar-peque { 
-  background: #e74c3c; /* Rojo para salida a obra */
-  color: white; /* Blanco */
+  background: #e74c3c; /* Rojo para la salida de material */
+  color: white; /* Letra blanca */
   border: none; /* Sin bordes */
-  padding: 5px 12px; /* Tamaño cómodo para dedo */
-  border-radius: 15px; /* Forma de píldora redonda */
-  font-size: 0.75rem; /* Texto legible pequeño */
-  font-weight: bold; /* Negrita */
-  font-style: italic; /* Cursiva según tu diseño */
-  margin-top: 8px; /* Separación con la información superior */
-  cursor: pointer; /* Mano al pasar */
+  padding: 5px 12px; /* Tamaño ideal para tocar con el pulgar */
+  border-radius: 15px; /* Forma tipo "píldora" o pastilla redonda */
+  font-size: 0.75rem; /* Tamaño de letra reducido */
+  font-weight: bold; /* Texto resaltado */
+  font-style: italic; /* Estilo cursiva */
+  margin-top: 8px; /* Separación con la información de arriba */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-borrar { 
-  background: #eee; /* Gris muy claro sutil */
+  background: #eee; /* Gris muy claro casi invisible */
   color: #888; /* Texto gris suave */
-  position: absolute; /* Esquina superior derecha de la tarjeta */
-  right: 8px; /* Separación pared derecha */
-  top: 8px; /* Separación techo */
-  padding: 3px 6px; /* Tamaño minúsculo */
+  position: absolute; /* Posicionado exactamente en una esquina de la tarjeta */
+  right: 8px; /* Separación de la pared derecha de la tarjeta */
+  top: 8px; /* Separación del techo de la tarjeta */
+  padding: 3px 6px; /* Relleno mínimo para no abultar */
   font-size: 0.75rem; /* Texto pequeño */
   border: none; /* Sin bordes */
-  border-radius: 5px; /* Redondeo */
+  border-radius: 5px; /* Redondeo de esquinas */
   font-family: Sriracha; /* Tu fuente personalizada */
-  cursor: pointer; /* Mano al pasar */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-borrar-foto-edit { 
-  width: 100%; /* Ancho total dentro del editor */
-  background: #f8d7da; /* Rojo muy claro para advertencia */
+  width: 100%; /* Ancho total dentro del formulario de edición */
+  background: #f8d7da; /* Rojo muy claro de advertencia */
   color: #721c24; /* Texto rojo oscuro */
   border: 1px solid #f5c6cb; /* Borde rojo sutil */
   padding: 8px; /* Relleno interno */
-  border-radius: 6px; /* Redondeo */
-  font-size: 0.8rem; /* Texto pequeño */
+  border-radius: 6px; /* Redondeo suavizado */
+  font-size: 0.8rem; /* Letra pequeña */
   cursor: pointer; /* Mano al pasar */
-  font-weight: bold; /* Negrita */
+  font-weight: bold; /* Texto en negrita */
   margin-bottom: 10px; /* Separación inferior */
 }
 
 .btn-borrar-hist { 
-  width: 100%; /* Botón global de historial */
-  background: #6c757d; /* Gris oscuro neutro */
-  color: white; /* Blanco */
+  width: 100%; /* Botón de ancho completo en la pantalla de historial */
+  background: #6c757d; /* Color gris oscuro neutro */
+  color: white; /* Letra blanca */
   padding: 10px; /* Relleno generoso */
-  border-radius: 5px; /* Redondeo suave */
-  margin-bottom: 15px; /* Separación inferior */
+  border-radius: 5px; /* Redondeo de esquinas */
+  margin-bottom: 15px; /* Separación con la lista de abajo */
   border: none; /* Sin bordes */
-  cursor: pointer; /* Mano al pasar */
+  cursor: pointer; /* Icono de mano */
 }
 
-/* --- Historial --- */
+/* --- Historial Log --- */
 .hist-item { 
-  background: white; /* Fondo blanco */
-  padding: 10px; /* Relleno interno */
+  background: white; /* Fondo blanco para cada fila de movimiento */
+  padding: 10px; /* Margen interno */
   border-bottom: 1px solid #eee; /* Línea divisoria gris claro */
-  font-size: 0.85rem; /* Texto pequeño */
+  font-size: 0.85rem; /* Tamaño de letra pequeño e informativo */
 }
 
 .hist-fecha { 
-  color: #888; /* Gris suave para la fecha */
-  font-weight: bold; /* Negrita resaltada */
+  color: #888; /* Color gris suave para la hora y fecha */
+  font-weight: bold; /* Resalta la fecha en negrita */
 }
 
-/* --- Buscador Global --- */
+/* --- Buscadores (Inventario e Historial) --- */
 #buscador { 
-  margin-bottom: 0; /* Quita el margen inferior para que el filtro de categoría se acerque */
-  border: 2px solid #3498db; /* Borde azul resaltado */
+  margin-bottom: 0; /* Quita el margen para acercarlo a los botones de filtro */
+  border: 2px solid #3498db; /* Borde azul llamativo para encontrarlo rápido */
   background: #fdfdfd; /* Fondo casi blanco */
 }
 
+#buscador-historial { 
+  border: 2px solid #6c757d; /* Borde gris que combina con el botón de borrar historial */
+  margin-bottom: 0; /* Alineación limpia */
+}
+
 .label-input { 
-  display: block; /* En su propia línea */
-  font-size: 0.85rem; /* Texto pequeño */
+  display: block; /* Pone la etiqueta encima del campo, ocupando su línea */
+  font-size: 0.85rem; /* Tamaño de letra discreto */
   color: #666; /* Gris intermedio */
-  margin-bottom: 5px; /* Separación con el input de abajo */
-  font-weight: bold; /* Negrita */
+  margin-bottom: 5px; /* Espacio con el input de abajo */
+  font-weight: bold; /* Texto en negrita */
 }
