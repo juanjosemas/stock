@@ -1,73 +1,73 @@
 /* --- Estilos Generales --- */
 * { 
-  box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total para que nada desborde */
+  box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total del elemento para evitar descuadres */
 }
 
 body { 
-  font-family: 'Segoe UI', sans-serif; /* Establece la fuente principal de la aplicación */
-  margin: 0; /* Elimina los márgenes exteriores por defecto del navegador */
-  background: #f0f2f5; /* Color de fondo gris claro para las zonas sin imagen */
-  color: #1c1e21; /* Color de texto principal casi negro para mejor lectura */
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con una capa blanquecina muy suave */
+  font-family: 'Segoe UI', sans-serif; /* Define la fuente principal del sistema para que se vea moderna */
+  margin: 0; /* Elimina los márgenes exteriores predeterminados del navegador */
+  background: #f0f2f5; /* Color gris claro de fondo que se ve si la imagen falla */
+  color: #1c1e21; /* Color de texto principal casi negro para una lectura cómoda */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('img/construccion.jpg'); /* Imagen de fondo con una capa blanca transparente suave */
   background-repeat: no-repeat; /* Evita que la imagen se repita como un mosaico */
   background-position: center center; /* Centra la imagen de fondo tanto horizontal como verticalmente */
-  background-attachment: fixed; /* La imagen se queda quieta al hacer scroll, creando un efecto profesional */
-  background-size: cover; /* La imagen se estira para cubrir toda la pantalla siempre */
+  background-attachment: fixed; /* Hace que la imagen se quede quieta al hacer scroll (efecto profesional) */
+  background-size: cover; /* Estira la imagen para que cubra siempre toda la pantalla sin dejar huecos */
 }
 
 h2 {
-  font-family: Lobster; /* Fuente decorativa para los títulos de sección */
-  text-decoration: underline; /* Subrayado decorativo para los encabezados */
+  font-family: Lobster; /* Fuente decorativa para los títulos de las secciones */
+  text-decoration: underline; /* Añade un subrayado decorativo a los encabezados */
 }
 
 /* --- Pantalla de Inicio de Sesión (Login) --- */
 .login-container {
   display: flex; /* Activa el modo flexible para centrar el contenido */
-  justify-content: center; /* Centra la tarjeta horizontalmente */
-  align-items: center; /* Centra la tarjeta verticalmente */
+  justify-content: center; /* Centra el login horizontalmente */
+  align-items: center; /* Centra el login verticalmente */
   height: 100vh; /* Ocupa el 100% de la altura de la pantalla del dispositivo */
-  background: #2c3e50; /* Fondo azul oscuro que tapa la imagen de fondo en el login */
+  background: #2c3e50; /* Azul oscuro corporativo que tapa el fondo en la entrada */
   padding: 20px; /* Margen interno para que en móviles no pegue a los bordes */
 }
 
 .login-card {
-  width: 100%; /* Ocupa todo el ancho disponible */
-  max-width: 350px; /* Pero no deja que crezca más de 350px para que se vea bien */
-  text-align: center; /* Centra todos los textos e inputs dentro de la tarjeta */
+  width: 100%; /* Ocupa todo el ancho disponible dentro de sus límites */
+  max-width: 350px; /* Evita que la tarjeta crezca más de este tamaño para que se vea bien */
+  text-align: center; /* Centra textos e inputs dentro de la tarjeta */
   padding: 30px !important; /* Relleno interno extra para dar aire al formulario */
 }
 
 .logo-login {
-  font-size: 2rem; /* Tamaño de letra grande para el nombre de la empresa */
+  font-size: 2rem; /* Tamaño de letra grande para la marca en el login */
   font-weight: bold; /* Texto en negrita */
-  color: #2c3e50; /* Color azul oscuro para el texto */
-  margin-bottom: 20px; /* Espacio debajo del logo */
-  font-family: Lobster; /* Fuente personalizada igual que los títulos */
+  color: #2c3e50; /* Color azul oscuro para el texto del logo */
+  margin-bottom: 20px; /* Espacio de separación debajo del logo */
+  font-family: Lobster; /* Fuente personalizada */
 }
 
 .error-text {
-  color: #e74c3c; /* Color rojo vibrante para indicar error */
-  font-size: 0.9rem; /* Letra un poco más pequeña */
-  margin-top: 10px; /* Espacio arriba del mensaje de error */
+  color: #e74c3c; /* Color rojo brillante para mensajes de error */
+  font-size: 0.9rem; /* Letra un poco más pequeña para el aviso */
+  margin-top: 10px; /* Separación por encima del mensaje */
   font-weight: bold; /* Resaltado de importancia */
 }
 
 /* --- Barra Superior (Top Bar) --- */
 .top-bar { 
-  background: #2c3e50; /* Fondo azul oscuro igual que el login */
-  color: white; /* Texto en color blanco */
-  height: 60px; /* Altura fija de la barra superior */
-  display: flex; /* Permite alinear los elementos en fila */
-  align-items: center; /* Centra verticalmente el logo y el menú */
+  background: #2c3e50; /* Fondo azul oscuro profesional */
+  color: white; /* Texto e iconos en blanco */
+  height: 60px; /* Altura fija para que la barra sea uniforme */
+  display: flex; /* Alinea logo y menú en una fila horizontal */
+  align-items: center; /* Centrado vertical de los elementos */
   padding: 0 15px; /* Espaciado lateral */
-  position: sticky; /* Se queda pegada arriba aunque bajes la página */
-  top: 0; /* Posición cero respecto al techo de la pantalla */
-  z-index: 100; /* Prioridad de visualización para que nada pase por encima */
+  position: sticky; /* Se queda pegada arriba mientras haces scroll */
+  top: 0; /* Posición inicial superior */
+  z-index: 100; /* Prioridad de visualización sobre el resto */
 }
 
 .menu-trigger { 
-  font-size: 24px; /* Tamaño del icono de tres rayas (hamburguesa) */
-  cursor: pointer; /* Cambia el ratón por una mano al pasar por encima */
+  font-size: 24px; /* Tamaño del icono de hamburguesa */
+  cursor: pointer; /* Cambia el ratón por una mano para indicar que es pulsable */
   margin-right: 15px; /* Separación con el texto del logo */
 }
 
@@ -78,36 +78,36 @@ h2 {
 }
 
 .ico { 
-  border-radius: 50%; /* Hace que la imagen del icono de Juanjo sea redonda */
-  margin: 8px 8px 8px 80px; /* Margen derecho de 80px para posicionarlo según tu gusto */
+  border-radius: 50%; /* Hace que la foto de Juanjo sea circular */
+  margin: 8px 8px 8px 80px; /* Margen derecho específico según tu diseño */
   animation: logo 3s ease-in-out; /* Aplica la animación de rotación al cargar */
-  background-color: black; /* Fondo negro detrás de la imagen por si es transparente */
-  border: 2px solid red; /* Borde rojo circular */
-  vertical-align: middle; /* Alinea la imagen con el texto de al lado */
+  background-color: black; /* Fondo negro detrás de la imagen */
+  border: 2px solid red; /* Borde rojo circular característico */
+  vertical-align: middle; /* Alinea la imagen a la misma altura que el texto */
 }
 
 @keyframes logo { 
-  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Empieza invisible, pequeña y sin rotar */
-  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina visible y habiendo dado 4 vueltas */
+  from { opacity: 0; transform: scale(0.5) rotate(0deg); } /* Empieza pequeño e invisible */
+  to { opacity: 1; transform: scale(1) rotate(1440deg); } /* Termina normal tras rotar 4 vueltas */
 }
 
 /* Animación de aviso para Stock Crítico */
 @keyframes blink {
-  0% { opacity: 1; } /* Totalmente visible */
-  50% { opacity: 0.6; } /* Casi transparente */
+  0% { opacity: 1; } /* Visible */
+  50% { opacity: 0.6; } /* Casi invisible para el efecto parpadeo */
   100% { opacity: 1; } /* Vuelve a ser visible */
 }
 
 /* --- Sistema de Cámara Interna --- */
 .camera-overlay {
   position: fixed; /* Flota sobre toda la pantalla */
-  top: 0; /* Al borde superior */
-  left: 0; /* Al borde izquierdo */
-  width: 100%; /* Ancho total de la pantalla */
-  height: 100%; /* Alto total de la pantalla */
-  background: black; /* Fondo negro para que parezca una app de cámara */
-  z-index: 1000; /* Por encima de cualquier menú o tarjeta */
-  display: flex; /* Activa flexbox para centrar visor y botones */
+  top: 0; /* Al tope superior */
+  left: 0; /* Al tope izquierdo */
+  width: 100%; /* Cubre todo el ancho del visor */
+  height: 100%; /* Cubre todo el alto del visor */
+  background: black; /* Fondo negro para concentrar la vista en el vídeo */
+  z-index: 1000; /* Prioridad máxima sobre cualquier otro elemento */
+  display: flex; /* Centrado de vídeo y botones */
   flex-direction: column; /* Apila el vídeo arriba y los botones abajo */
   align-items: center; /* Centrado horizontal */
   justify-content: center; /* Centrado vertical */
@@ -115,429 +115,499 @@ h2 {
 
 #video-stream {
   width: 100%; /* El visor ocupa todo el ancho */
-  max-height: 80vh; /* Pero deja un 20% de espacio abajo para los botones */
-  background: #222; /* Fondo oscuro mientras se enciende el visor */
-  border: 2px solid #3498db; /* Borde azul para el visor de cámara */
+  max-height: 80vh; /* Altura máxima para dejar sitio a los botones inferiores */
+  background: #222; /* Fondo oscuro mientras carga la cámara */
+  border: 2px solid #3498db; /* Borde azul estético para el visor */
 }
 
 .camera-controls {
-  padding: 20px; /* Espacio para que los botones se vean bien */
-  display: flex; /* Alinea los botones en fila */
-  gap: 20px; /* Separación entre el botón capturar y cancelar */
+  padding: 20px; /* Espacio alrededor de los botones táctiles */
+  display: flex; /* Botones en fila horizontal */
+  gap: 20px; /* Separación entre Capturar y Cancelar */
 }
 
 .btn-capture {
-  background: #e74c3c; /* Color rojo para el botón de disparo */
+  background: #e74c3c; /* Rojo para el botón de disparo */
   color: white; /* Texto blanco */
-  padding: 15px 30px; /* Tamaño grande para pulsar fácil con el dedo */
-  border: 5px solid rgba(255,255,255,0.3); /* Borde estético tipo objetivo de cámara */
-  border-radius: 50px; /* Botón totalmente redondo en las esquinas */
-  font-weight: bold; /* Texto resaltado */
-  cursor: pointer; /* Icono de mano al pasar */
+  padding: 15px 30px; /* Área de toque grande para el móvil */
+  border: 5px solid rgba(255,255,255,0.3); /* Borde tipo lente de cámara */
+  border-radius: 50px; /* Botón totalmente redondeado */
+  font-weight: bold; /* Letra resaltada */
+  cursor: pointer; /* Icono de mano */
 }
 
 .btn-close-cam {
-  background: #666; /* Color gris para el botón de cancelar */
-  color: white; /* Letra blanca */
+  background: #666; /* Gris para cancelar la acción */
+  color: white; /* Texto blanco */
   padding: 10px 20px; /* Tamaño estándar de botón */
-  border: none; /* Sin bordes */
-  border-radius: 6px; /* Redondeo de esquinas */
+  border: none; /* Elimina el borde */
+  border-radius: 6px; /* Redondeo suave */
   cursor: pointer; /* Icono de mano */
 }
 
+/* --- Botones de Fotos en Formulario --- */
 .btn-abrir-cam {
-  flex: 1; /* Hace que el botón de cámara ocupe la mitad del ancho del grupo */
-  background: #3498db; /* Color azul para destacar la acción de foto */
-  color: white; /* Texto en blanco */
+  flex: 1; /* Ocupa la mitad del espacio disponible en el grupo */
+  background: #3498db; /* Azul corporativo para la acción de cámara */
+  color: white; /* Texto blanco */
   padding: 12px; /* Relleno interno */
-  border: none; /* Sin bordes */
+  border: none; /* Sin borde */
   border-radius: 6px; /* Esquinas suavizadas */
-  font-weight: bold; /* Texto en negrita */
+  font-weight: bold; /* Texto resaltado */
+  margin-bottom: 10px; /* Separación inferior */
   cursor: pointer; /* Icono de mano */
-}
-
-/* --- Botones de Imágenes en Formularios --- */
-.grupo-botones-foto {
-  display: flex; /* Alinea el botón Cámara y Galería en la misma línea */
-  gap: 10px; /* Espacio de separación entre los dos botones */
-  margin-bottom: 10px; /* Espacio con el elemento de abajo */
 }
 
 .btn-galeria {
-  flex: 1; /* Hace que el botón de galería ocupe la otra mitad del ancho */
+  flex: 1; /* Ocupa la otra mitad del espacio en el grupo */
   background: #f39c12; /* Color naranja para diferenciarlo de la cámara */
-  color: white; /* Texto en blanco */
-  padding: 12px; /* Relleno interno igual al de cámara */
+  color: white; /* Letra blanca */
+  padding: 12px; /* Relleno interno idéntico al de cámara */
   border: none; /* Sin bordes */
   border-radius: 6px; /* Esquinas suavizadas */
-  font-weight: bold; /* Texto en negrita */
+  font-weight: bold; /* Texto resaltado */
+  margin-bottom: 10px; /* Separación inferior */
   cursor: pointer; /* Icono de mano */
+}
+
+.grupo-botones-foto {
+  display: flex; /* Alinea los botones de Cámara y Galería en la misma línea */
+  gap: 10px; /* Espacio de separación entre los botones */
+  margin-bottom: 10px; /* Margen inferior con el siguiente campo */
 }
 
 /* --- Menú Lateral (Sidebar) --- */
 .sidebar { 
   position: fixed; /* Menú flotante lateral */
-  left: -250px; /* Escondido por defecto fuera de la pantalla (izquierda) */
-  top: 0; /* Pegado al borde superior */
+  left: -250px; /* Escondido por defecto fuera de la pantalla por la izquierda */
+  top: 0; /* Al tope superior */
   width: 200px; /* Ancho del menú desplegable */
   height: 100%; /* Ocupa todo el alto de la pantalla */
   background: #fff; /* Fondo blanco para las opciones */
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra a la derecha para dar profundidad */
-  transition: 0.3s; /* Velocidad de la animación al salir o entrar */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Sombra derecha para dar profundidad */
+  transition: 0.3s; /* Velocidad de la animación al abrir y cerrar */
   z-index: 200; /* Por encima de la barra superior */
-  padding-top: 20px; /* Espacio superior */
-  font-style: italic; /* Texto en cursiva según tu diseño */
-  font-family: Sriracha; /* Tu fuente personalizada para el menú */
+  padding-top: 20px; /* Espacio superior interno */
+  font-style: italic; /* Texto en cursiva */
+  font-family: Sriracha; /* Tu fuente personalizada */
 }
 
 .sidebar.active { 
-  left: 0; /* Se mueve a la posición visible al activarlo */
+  left: 0; /* Posición visible al activarse el menú */
 }
 
 .sidebar-header { 
   padding: 15px; /* Margen interno */
-  font-weight: bold; /* Texto en negrita */
-  border-bottom: 1px solid #eee; /* Línea divisoria inferior */
-  margin-bottom: 10px; /* Espacio antes de los enlaces */
-  color: #2c3e50; /* Color azul para el título Gestión */
-  text-align: center; /* Texto centrado */
+  font-weight: bold; /* Negrita */
+  border-bottom: 1px solid #eee; /* Línea separadora sutil */
+  margin-bottom: 10px; /* Espacio antes de las opciones */
+  color: #2c3e50; /* Azul oscuro para el título del menú */
+  text-align: center; /* Centra el título */
   font-family: Piedra; /* Tu fuente del título */
 }
 
 .sidebar a { 
-  display: block; /* Cada enlace ocupa toda la línea */
-  padding: 15px; /* Espacio grande para facilidad táctil */
+  display: block; /* Cada enlace ocupa una línea completa */
+  padding: 15px; /* Área de toque grande para móviles */
   color: #333; /* Color de texto gris oscuro */
-  text-decoration: none; /* Elimina el subrayado de los links */
-  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre opciones */
+  text-decoration: none; /* Elimina el subrayado */
+  border-bottom: 1px solid #f9f9f9; /* Separación sutil entre items */
 }
 
 .btn-exportar-menu { 
-  background: #d4edda; /* Color verde muy suave para exportación */
+  background: #d4edda; /* Verde muy suave para la exportación de Excel */
   color: #155724 !important; /* Texto verde oscuro resaltado */
-  font-weight: bold; /* Texto en negrita */
+  font-weight: bold; /* Negrita */
 }
 
 .btn-logout-menu { 
-  background: #f8d7da; /* Color rojo suave para el cierre de sesión */
-  color: #721c24 !important; /* Texto rojo oscuro resaltado */
-  font-weight: bold; /* Texto en negrita */
+  background: #f8d7da; /* Rojo suave para destacar el cierre de sesión */
+  color: #721c24 !important; /* Texto rojo oscuro */
+  font-weight: bold; /* Negrita */
   margin-top: 20px; /* Separación superior extra */
 }
 
 /* Capa Oscura del Menú (Overlay) */
 #overlay { 
   display: none; /* Oculto por defecto */
-  position: fixed; /* Fijo cubriendo todo */
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background: rgba(0,0,0,0.5); /* Color negro con transparencia al 50% */
-  z-index: 150; /* Entre las tarjetas y el menú lateral */
+  position: fixed; /* Fijo cubriendo todo el fondo */
+  top: 0; left: 0; width: 100%; height: 100%; 
+  background: rgba(0,0,0,0.5); /* Color negro transparente al 50% */
+  z-index: 150; /* Entre el contenido y el menú */
 }
 
 #overlay.active { 
-  display: block; /* Se muestra cuando abrimos el menú */
+  display: block; /* Se muestra al abrir el menú lateral */
 }
 
-/* --- Contenedores de Pantallas y Tarjetas --- */
+/* --- Contenedores y Vistas --- */
 .container { 
-  padding: 15px; /* Margen interno lateral para que el contenido no pegue al borde */
+  padding: 15px; /* Margen lateral interno para el contenido de las tarjetas */
 }
 
 .view { 
-  animation: fadeIn 0.3s; /* Aparece suavemente al cambiar de sección */
+  animation: fadeIn 0.3s; /* Hace que las pantallas aparezcan suavemente al cambiar */
 }
 
 .hidden { 
-  display: none; /* Oculta elementos que no se deben ver ahora */
+  display: none; /* Oculta elementos que no corresponden a la sección actual */
 }
 
 @keyframes fadeIn { 
-  from { opacity: 0; } /* Empieza invisible */
+  from { opacity: 0; } /* Inicia invisible */
   to { opacity: 1; } /* Termina visible */
 }
 
+/* --- Tarjetas (Cards) de Formularios --- */
 .card { 
-  background: white; /* Fondo blanco limpio para los formularios */
-  padding: 12px; /* Relleno interno */
-  border-radius: 8px; /* Esquinas redondeadas */
+  background: white; /* Fondo blanco limpio */
+  padding: 12px; /* Margen interno */
+  border-radius: 8px; /* Redondeo de esquinas */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave para dar relieve */
-  margin-bottom: 15px; /* Espacio inferior con el siguiente bloque */
+  margin-bottom: 15px; /* Espacio inferior con la siguiente tarjeta */
 }
 
 input { 
-  width: 100%; /* Ocupa todo el ancho de su contenedor */
-  padding: 12px; /* Relleno para que sea fácil escribir */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 12px; /* Relleno para que sea cómodo escribir */
   margin-bottom: 10px; /* Separación con el siguiente campo */
-  border: 1px solid #ddd; /* Borde gris claro sutil */
-  border-radius: 6px; /* Redondeo leve de esquinas */
-  font-size: 16px; /* Tamaño de letra grande para que se lea bien en móviles */
+  border: 1px solid #ddd; /* Borde gris sutil */
+  border-radius: 6px; /* Redondeo leve */
+  font-size: 16px; /* Letra grande para que sea legible en móviles */
 }
 
 .input-select { 
-  width: 100%; /* Ancho total para el desplegable de categorías */
+  width: 100%; /* Ancho total del desplegable */
   padding: 12px; /* Relleno interno */
   margin-bottom: 10px; /* Separación inferior */
   border: 1px solid #ddd; /* Borde gris claro */
-  border-radius: 6px; /* Esquinas redondeadas */
-  font-size: 16px; /* Tamaño de letra legible */
+  border-radius: 6px; /* Redondeo de esquinas */
+  font-size: 16px; /* Letra legible */
   background: white; /* Fondo blanco */
 }
 
 /* --- Filtros de Categoría Superior --- */
 .contenedor-filtros { 
-  display: flex; /* Coloca los botones en línea */
-  overflow-x: auto; /* Permite deslizar a los lados si hay muchos filtros */
+  display: flex; /* Coloca los botones en una fila horizontal */
+  overflow-x: auto; /* Permite deslizar si hay muchas categorías */
   gap: 8px; /* Espacio entre los botones de filtro */
   margin-top: 10px; /* Separación con el buscador */
-  padding-bottom: 5px; /* Espacio para que el scroll no tape el botón */
+  padding-bottom: 5px; /* Espacio para el dedo al deslizar el scroll */
 }
 
 .btn-filtro { 
-  background: #eee; /* Color gris claro por defecto */
+  background: #eee; /* Gris claro por defecto */
   border: none; /* Sin bordes */
-  padding: 6px 12px; /* Relleno tipo píldora */
-  border-radius: 20px; /* Forma de pastilla redondeada */
+  padding: 6px 12px; /* Relleno para forma de píldora */
+  border-radius: 20px; /* Redondeado total */
   font-size: 0.75rem; /* Texto pequeño */
-  white-space: nowrap; /* Evita que el texto del botón se parta en dos */
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
   cursor: pointer; /* Icono de mano */
 }
 
 .btn-filtro.active { 
-  background: #3498db; /* Azul corporativo para indicar filtro seleccionado */
-  color: white; /* Letra blanca para contrastar */
-  font-weight: bold; /* Texto en negrita */
+  background: #3498db; /* Azul corporativo si el filtro está seleccionado */
+  color: white; /* Letra blanca contrastada */
+  font-weight: bold; /* Resaltado en negrita */
 }
 
+/* --- Etiquetas y Miniaturas de Foto --- */
 .tag-categoria { 
-  font-size: 0.6rem; /* Letra muy pequeña para la etiqueta de la tarjeta */
-  background: #f0f2f5; /* Fondo gris neutro suave */
-  color: #555; /* Letra gris oscura */
-  padding: 2px 5px; /* Espaciado mínimo */
+  font-size: 0.6rem; /* Letra minúscula para la etiqueta */
+  background: #f0f2f5; /* Gris suave neutro */
+  color: #555; /* Texto gris oscuro */
+  padding: 2px 5px; /* Espacio mínimo interno */
   border-radius: 4px; /* Redondeo leve */
-  display: inline-block; /* Ocupa solo el espacio de su texto */
-  margin-bottom: 4px; /* Separación con el nombre de la herramienta */
-  text-transform: uppercase; /* Pone el texto en mayúsculas automáticamente */
+  display: inline-block; /* Ocupa solo su espacio */
+  margin-bottom: 4px; /* Separación con el nombre */
+  text-transform: uppercase; /* Siempre en mayúsculas */
 }
 
-/* --- Miniaturas de Foto en Formularios --- */
 .container-preview-form { 
-  text-align: center; /* Centra la foto que acabamos de hacer */
+  text-align: center; /* Centra la miniatura en el formulario */
   margin-bottom: 10px; /* Espacio inferior */
 }
 
 .img-preview-form { 
-  max-width: 100px; /* Ancho máximo de la miniatura para no estirar el formulario */
-  height: auto; /* Mantiene la proporción de la imagen */
-  border-radius: 8px; /* Redondeo de la foto previsualizada */
-  border: 2px solid #3498db; /* Borde azul para destacar que la foto está cargada */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+  max-width: 100px; /* Límite de ancho para no deformar el formulario */
+  height: auto; /* Mantiene la proporción original */
+  border-radius: 8px; /* Redondeo de la foto capturada */
+  border: 2px solid #3498db; /* Borde azul para destacar el éxito de la carga */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
 }
 
-/* --- Tarjetas de Herramientas (Item Cards) --- */
+/* --- Notas de Obra --- */
+.textarea-notas {
+  width: 100%; /* Ocupa el 100% del ancho de la tarjeta */
+  height: 80px; /* Altura del cuadro de texto */
+  padding: 10px; /* Espacio para escribir cómodo */
+  border-radius: 6px; /* Redondeo */
+  border: 1px solid #ddd; /* Borde gris suave */
+  font-size: 0.9rem; /* Letra mediana */
+  font-family: inherit; /* Hereda la fuente del sistema */
+  resize: none; /* Evita que el usuario cambie el tamaño manualmente */
+  margin-bottom: 8px; /* Separación con el botón Guardar */
+}
+
+.btn-guardar-nota {
+  width: 100%; /* Botón de ancho completo */
+  background: #2c3e50; /* Azul oscuro corporativo */
+  color: white; /* Letras blancas */
+  padding: 8px; /* Relleno interno */
+  border-radius: 4px; /* Esquinas suavizadas */
+  border: none; /* Sin bordes */
+  font-size: 0.8rem; /* Letra pequeña */
+  font-weight: bold; /* Negrita resaltada */
+  cursor: pointer; /* Icono de mano */
+}
+
+.seccion-notas {
+  margin-top: 15px; /* Separación con la lista de herramientas superior */
+  padding-top: 10px; /* Espacio interno al tope */
+  border-top: 1px dashed #ccc; /* Línea discontinua divisoria suave */
+}
+
+/* --- Recuento Rápido --- */
+.recuento-card { 
+  padding: 10px !important; /* Relleno reducido para que quepan más fichas */
+}
+
+.fila-input-recuento { 
+  display: flex; /* Coloca el cuadro del número y el botón en la misma línea */
+  gap: 10px; /* Separación horizontal entre ellos */
+  margin-top: 5px; /* Separación con el nombre de arriba */
+}
+
+.input-mini { 
+  width: 80px !important; /* Ancho muy pequeño fijo para el número de stock */
+  padding: 5px !important; /* Relleno mínimo interno */
+  margin-bottom: 0 !important; /* Elimina el margen inferior habitual */
+  text-align: center; /* Centra el número dentro del cuadro */
+}
+
+.btn-mini-confirm {
+  flex-grow: 1; /* El botón ocupa el resto del espacio de la fila */
+  border: none; /* Sin bordes */
+  padding: 5px 15px; /* Relleno lateral */
+  border-radius: 4px; /* Redondeo leve */
+  font-weight: bold; /* Resaltado */
+  cursor: pointer; /* Icono de mano */
+  transition: 0.3s; /* Animación de color suave al cambiar de estado */
+}
+
+.btn-mini-confirm.pendiente {
+  background: #34495e; /* Gris azulado para cuando falta revisar la herramienta */
+  color: white; /* Letras blancas */
+}
+
+.btn-mini-confirm.revisado {
+  background: #28a745; /* Color verde para indicar que ya se verificó */
+  color: white; /* Letras blancas */
+}
+
+/* --- Tarjetas de Inventario (Item Card) --- */
 .item-card { 
-  background: white; /* Fondo blanco */
-  padding: 12px; /* Espacio interno de la ficha */
-  border-radius: 10px; /* Esquinas muy redondeadas para un look moderno */
-  margin-bottom: 10px; /* Separación entre cada herramienta de la lista */
-  border-left: 6px solid #3498db; /* Franja azul distintiva a la izquierda */
-  position: relative; /* Base para el botón de borrar absoluto */
-  user-select: none; /* Evita que se seleccione texto al hacer doble clic */
-  
+  background: white; /* Fondo blanco sólido */
+  padding: 12px; /* Margen interno de la ficha */
+  border-radius: 10px; /* Esquinas muy redondeadas modernas */
+  margin-bottom: 10px; /* Separación con la siguiente herramienta de la lista */
+  border-left: 6px solid #3498db; /* Franja azul distintiva en el lateral izquierdo */
+  position: relative; /* Base para colocar botones en posiciones fijas (Borrar) */
+  user-select: none; /* Evita selección accidental de texto al hacer doble clic */
 }
 
 .card-cuerpo { 
   display: flex; /* Foto a la izquierda, información a la derecha */
-  align-items: flex-start; /* Alinea los elementos al techo de la tarjeta */
+  align-items: flex-start; /* Alineado arriba en el tope de la tarjeta */
   gap: 12px; /* Separación entre la imagen y el texto */
 }
 
 .item-foto { 
-  width: 65px; /* Ancho fijo para todas las miniaturas de la lista */
-  height: 65px; /* Alto fijo para todas las miniaturas de la lista */
-  object-fit: cover; /* Recorta la imagen para que rellene el cuadrado sin deformarse */
-  border-radius: 8px; /* Redondeo de la foto */
-  border: 1px solid #ddd; /* Borde gris fino */
-  flex-shrink: 0; /* Evita que la foto se aplaste si hay mucho texto al lado */
+  width: 65px; /* Ancho fijo para las miniaturas de la lista */
+  height: 65px; /* Alto fijo para las miniaturas de la lista */
+  object-fit: cover; /* Ajusta la imagen al cuadrado recortando sobrantes sin deformar */
+  border-radius: 8px; /* Redondeo de las esquinas de la imagen */
+  border: 1px solid #ddd; /* Borde gris fino para enmarcar la miniatura */
+  flex-shrink: 0; /* Impide que la foto se comprima si el texto es largo */
 }
 
 .item-foto-vacia { 
-  width: 65px; /* Mismo tamaño que la foto */
-  height: 65px; /* Mismo tamaño que la foto */
+  width: 65px; /* Mismo tamaño que las fotos reales */
+  height: 65px; /* Mismo tamaño que las fotos reales */
   background: #f9f9f9; /* Fondo gris casi blanco para el hueco sin foto */
-  display: flex; /* Para centrar el icono de cámara */
-  justify-content: center; /* Centrado horizontal del icono */
-  align-items: center; /* Centrado vertical del icono */
+  display: flex; /* Centrado de icono */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
   border-radius: 8px; /* Redondeo */
-  border: 1px dashed #ccc; /* Borde con puntitos gris */
-  color: #bbb; /* Color de icono de cámara gris suave */
+  border: 1px dashed #ccc; /* Borde de puntos gris */
+  color: #bbb; /* Color gris suave para el icono de cámara */
   font-size: 1.2rem; /* Tamaño del icono */
-  flex-shrink: 0; /* Evita deformación */
+  flex-shrink: 0; /* Evita que se deforme */
 }
 
 .card-info { 
-  flex-grow: 1; /* El bloque de texto ocupa todo el espacio que sobra a la derecha */
+  flex-grow: 1; /* Hace que el texto use todo el espacio restante a la derecha */
 }
 
 .item-nombre { 
-  font-weight: bold; /* Nombre de la herramienta en negrita */
-  font-size: 1.5rem; /* Tamaño estándar legible */
-  display: block; /* Ocupa su propia línea */
-  margin-right: 25px; /* Deja espacio a la derecha para que el botón borrar no moleste */
-  cursor: pointer; /* Cambia a mano indicando que se puede editar */
-  font-family: Sriracha;
-  font-style: italic;
-  text-decoration: underline;
+  font-weight: bold; /* Nombre resaltado en negrita */
+  font-size: 1.5rem; /* Tamaño de letra grande según tu cambio */
+  display: block; /* Ocupa su propia línea completa */
+  margin-right: 25px; /* Deja hueco a la derecha para no tapar el botón borrar */
+  cursor: pointer; /* Indica que es editable */
+  font-family: Sriracha; /* Tu fuente con estilo escritura */
+  font-style: italic; /* Texto inclinado */
+  text-decoration: underline; /* Nombre siempre subrayado */
 }
 
 .item-nombre:hover { 
-  color: #3498db; /* Cambia a color azul al pasar el ratón por encima */
+  color: #3498db; /* Cambia a azul al pasar el ratón */
 }
 
 .info-stock { 
-  font-size: 0.75rem; /* Tamaño de letra pequeño para datos de coste y fecha */
-  color: #666; /* Gris intermedio para menor peso visual */
-  margin: 3px 0; /* Separación vertical */
+  font-size: 0.75rem; /* Letra pequeña para datos secundarios (coste, fecha) */
+  color: #666; /* Gris oscuro sutil */
+  margin: 3px 0; /* Aire vertical */
 }
 
-/* Etiquetas de Ubicación (Badges) */
+/* Badges de Ubicación */
 .badge-obra { 
-  display: inline-block; /* Se adapta al ancho del texto contenido */
-  background: #fff3cd; /* Fondo amarillo claro tipo obra */
-  color: #856404; /* Texto marrón oscuro para lectura fácil */
+  display: inline-block; /* Ocupa solo el ancho del texto */
+  background: #fff3cd; /* Amarillo claro para obra */
+  color: #856404; /* Letra marrón oscuro legible */
   padding: 2px 6px; /* Relleno compacto */
-  border-radius: 4px; /* Esquinas levemente redondeadas */
-  font-size: 0.7rem; /* Letra minúscula */
+  border-radius: 4px; /* Redondeo suave */
+  font-size: 0.7rem; /* Texto pequeño */
   margin-top: 3px; /* Separación superior */
-  margin-right: 4px; /* Separación lateral con otras etiquetas */
+  margin-right: 4px; /* Separación lateral */
   border: 1px solid #ffeeba; /* Borde sutil amarillo */
 }
 
 .badge-almacen { 
-  display: inline-block; /* Se adapta al texto */
-  background: #d4edda; /* Fondo verde claro tipo almacén */
-  color: #155724; /* Texto verde oscuro */
+  display: inline-block; /* Ocupa solo su ancho */
+  background: #d4edda; /* Verde claro para almacén */
+  color: #155724; /* Letra verde oscuro legible */
   padding: 2px 6px; /* Relleno compacto */
   border-radius: 4px; /* Redondeo suave */
-  font-size: 0.7rem; /* Letra minúscula */
+  font-size: 0.7rem; /* Texto pequeño */
   margin-top: 3px; /* Separación superior */
   margin-right: 4px; /* Separación lateral */
   border: 1px solid #c3e6cb; /* Borde sutil verde */
 }
 
-/* --- Controles de Retorno a Almacén --- */
+/* --- Controles de Retorno (Regreso de Obra) --- */
 .fila-regreso { 
-  display: flex; /* Pone el nombre de obra y el botón Devolver en la misma línea */
+  display: flex; /* Badge y botón juntos en horizontal */
   align-items: center; /* Centrado vertical */
-  gap: 5px; /* Separación mínima entre badge y botón */
-  margin-top: 3px; /* Separación superior */
+  gap: 5px; /* Separación mínima */
+  margin-top: 3px; /* Aire superior */
 }
 
 .btn-mini-regreso { 
-  background: #3498db; /* Color azul para el botón de devolver */
+  background: #3498db; /* Azul para el botón de retorno */
   color: white; /* Letra blanca */
   border: none; /* Sin bordes */
-  padding: 2px 5px; /* Tamaño muy reducido y compacto */
-  border-radius: 4px; /* Esquinas suavizadas */
-  font-size: 0.65rem; /* Letra muy pequeña */
-  font-weight: bold; /* Texto resaltado */
+  padding: 2px 5px; /* Muy compacto para que no abulte */
+  border-radius: 4px; /* Redondeo leve */
+  font-size: 0.65rem; /* Texto minúsculo */
+  font-weight: bold; /* Resaltado */
   cursor: pointer; /* Icono de mano */
 }
 
 /* --- Botones de Acción Globales --- */
 .btn-save { 
-  width: 100%; /* Botón de ancho completo para los formularios */
+  width: 100%; /* Botón de ancho total del formulario */
   background: #28a745; /* Verde corporativo de guardar */
   color: white; /* Texto blanco */
   border: none; /* Sin bordes */
-  padding: 15px; /* Área de pulsación muy cómoda para dedos en móvil */
-  border-radius: 6px; /* Redondeo suave */
-  font-weight: bold; /* Texto en negrita */
+  padding: 15px; /* Área grande para tocar fácil */
+  border-radius: 6px; /* Redondeo */
+  font-weight: bold; /* Negrita */
   cursor: pointer; /* Icono de mano */
 }
 
 .btn-enviar-peque { 
-  background: #e74c3c; /* Rojo para la salida de material */
-  color: white; /* Letra blanca */
+  background: #e74c3c; /* Rojo para salida de herramientas */
+  color: white; /* Letras blancas */
   border: none; /* Sin bordes */
-  padding: 5px 12px; /* Tamaño ideal para tocar con el pulgar */
-  border-radius: 15px; /* Forma tipo "píldora" o pastilla redonda */
-  font-size: 0.75rem; /* Tamaño de letra reducido */
-  font-weight: bold; /* Texto resaltado */
-  font-style: italic; /* Estilo cursiva */
-  margin-top: 8px; /* Separación con la información de arriba */
+  padding: 5px 12px; /* Tamaño cómodo para el pulgar */
+  border-radius: 15px; /* Forma redonda tipo píldora */
+  font-size: 0.75rem; /* Letra legible pequeña */
+  font-weight: bold; /* Resaltado */
+  font-style: italic; /* Cursiva */
+  margin-top: 8px; /* Separación superior */
   cursor: pointer; /* Icono de mano */
 }
 
 .btn-borrar { 
   background: #eee; /* Gris muy claro casi invisible */
   color: #888; /* Texto gris suave */
-  position: absolute; /* Posicionado exactamente en una esquina de la tarjeta */
-  right: 8px; /* Separación de la pared derecha de la tarjeta */
-  top: 8px; /* Separación del techo de la tarjeta */
-  padding: 3px 6px; /* Relleno mínimo para no abultar */
+  position: absolute; /* Anclado arriba a la derecha de la ficha */
+  right: 8px; /* Margen derecho */
+  top: 8px; /* Margen superior */
+  padding: 3px 6px; /* Relleno mínimo */
   font-size: 0.75rem; /* Texto pequeño */
   border: none; /* Sin bordes */
-  border-radius: 5px; /* Redondeo de esquinas */
-  font-family: Sriracha; /* Tu fuente personalizada */
-  cursor: pointer; /* Icono de mano */
+  border-radius: 5px; /* Redondeo suave */
+  font-family: Sriracha; /* Tu fuente */
+  cursor: pointer; /* Mano al pasar */
 }
 
 .btn-borrar-foto-edit { 
-  width: 100%; /* Ancho total dentro del formulario de edición */
-  background: #f8d7da; /* Rojo muy claro de advertencia */
+  width: 100%; /* Ancho total dentro del editor */
+  background: #f8d7da; /* Rojo muy claro para advertencia */
   color: #721c24; /* Texto rojo oscuro */
-  border: 1px solid #f5c6cb; /* Borde rojo sutil */
-  padding: 8px; /* Relleno interno */
-  border-radius: 6px; /* Redondeo suavizado */
+  border: 1px solid #f5c6cb; /* Borde sutil */
+  padding: 8px; /* Relleno */
+  border-radius: 6px; /* Redondeo */
   font-size: 0.8rem; /* Letra pequeña */
-  cursor: pointer; /* Mano al pasar */
-  font-weight: bold; /* Texto en negrita */
-  margin-bottom: 10px; /* Separación inferior */
+  cursor: pointer; /* Mano */
+  font-weight: bold; /* Negrita */
+  margin-bottom: 10px; /* Margen inferior */
 }
 
 .btn-borrar-hist { 
-  width: 100%; /* Botón de ancho completo en la pantalla de historial */
-  background: #6c757d; /* Color gris oscuro neutro */
+  width: 100%; /* Botón de ancho completo en historial */
+  background: #6c757d; /* Gris oscuro neutro */
   color: white; /* Letra blanca */
   padding: 10px; /* Relleno generoso */
-  border-radius: 5px; /* Redondeo de esquinas */
-  margin-bottom: 15px; /* Separación con la lista de abajo */
+  border-radius: 5px; /* Redondeo */
+  margin-bottom: 15px; /* Aire inferior */
   border: none; /* Sin bordes */
-  cursor: pointer; /* Icono de mano */
+  cursor: pointer; /* Mano */
 }
 
-/* --- Historial Log --- */
+/* --- Historial Log (Movimientos) --- */
 .hist-item { 
-  background: white; /* Fondo blanco para cada fila de movimiento */
-  padding: 10px; /* Margen interno */
-  border-bottom: 1px solid #eee; /* Línea divisoria gris claro */
-  font-size: 0.85rem; /* Tamaño de letra pequeño e informativo */
+  background: white; /* Fondo blanco sólido para cada fila */
+  padding: 10px; /* Margen interno de la tarjeta */
+  border-bottom: 1px solid #eee; /* Separador inferior suave */
+  font-size: 0.85rem; /* Tamaño de letra reducido informativo */
+  margin-bottom: 5px; /* Aire con la siguiente fila */
+  border-radius: 6px; /* Redondeo de la tarjeta de log */
 }
 
 .hist-fecha { 
-  color: #888; /* Color gris suave para la hora y fecha */
-  font-weight: bold; /* Resalta la fecha en negrita */
+  color: #888; /* Gris suave para la hora y fecha */
+  font-weight: bold; /* Resaltado para localizar el tiempo rápido */
 }
 
-/* --- Buscadores (Inventario e Historial) --- */
+/* --- Buscadores e Inputs de Formulario --- */
 #buscador { 
-  margin-bottom: 0; /* Quita el margen para acercarlo a los botones de filtro */
-  border: 2px solid #3498db; /* Borde azul llamativo para encontrarlo rápido */
+  margin-bottom: 0; /* Quita el margen para acercarlo a las categorías */
+  border: 2px solid #3498db; /* Borde azul llamativo */
   background: #fdfdfd; /* Fondo casi blanco */
 }
 
 #buscador-historial { 
-  border: 2px solid #6c757d; /* Borde gris que combina con el botón de borrar historial */
-  margin-bottom: 0; /* Alineación limpia */
+  border: 2px solid #6c757d; /* Borde gris que combina con el botón de borrar log */
+  margin-bottom: 0; /* Alineado */
 }
 
 .label-input { 
-  display: block; /* Pone la etiqueta encima del campo, ocupando su línea */
-  font-size: 0.85rem; /* Tamaño de letra discreto */
+  display: block; /* La etiqueta encima del campo ocupando su fila */
+  font-size: 0.85rem; /* Letra discreta */
   color: #666; /* Gris intermedio */
-  margin-bottom: 5px; /* Espacio con el input de abajo */
-  font-weight: bold; /* Texto en negrita */
+  margin-bottom: 5px; /* Aire con el input */
+  font-weight: bold; /* Negrita resaltada */
 }

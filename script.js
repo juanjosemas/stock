@@ -14,41 +14,26 @@ const db = firebase.database();
 
 let inventario = [];
 let historial = [];
+let notasObra = {}; 
+let revisadosSession = {}; // NUEVO: Para recordar qué hemos revisado en esta sesión de recuento
 let filtroCategoriaActual = 'Todas';
 let fotoMarcadaParaBorrar = false;
 let fotoCapturadaTemp = null; 
 let previewContainerActual = ""; 
 
-// --- SISTEMA DE CÁMARA (Mejorado para evitar pantalla negra) ---
-
+// --- SISTEMA DE CÁMARA ---
 window.abrirCamara = async function(containerId) {
     previewContainerActual = containerId;
     const overlay = document.getElementById('camera-overlay');
     const video = document.getElementById('video-stream');
-    
     overlay.classList.remove('hidden');
-
-    const constraints = {
-        video: { 
-            facingMode: "environment", // Intentar cámara trasera
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-        },
-        audio: false
-    };
-
     try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
         video.srcObject = stream;
         window.currentStream = stream;
-        
-        // Forzar la reproducción después de cargar los metadatos
-        video.onloadedmetadata = () => {
-            video.play().catch(e => console.error("Error al reproducir video:", e));
-        };
+        video.onloadedmetadata = () => { video.play().catch(e => console.error(e)); };
     } catch (err) {
-        console.error("Error cámara:", err);
-        alert("No se pudo activar la cámara. Revisa los permisos o asegúrate de usar HTTPS.");
+        alert("Cámara no disponible. Revisa permisos.");
         cerrarCamara();
     }
 };
@@ -57,25 +42,16 @@ window.capturarFoto = function() {
     const video = document.getElementById('video-stream');
     const canvas = document.getElementById('canvas-photo');
     const context = canvas.getContext('2d');
-
-    if (video.videoWidth === 0) {
-        alert("Esperando a que la cámara inicie...");
-        return;
-    }
-
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
     fotoCapturadaTemp = canvas.toDataURL('image/jpeg', 0.6);
     document.getElementById(previewContainerActual).innerHTML = `<img src="${fotoCapturadaTemp}" class="img-preview-form">`;
     cerrarCamara();
 };
 
 window.cerrarCamara = function() {
-    if (window.currentStream) {
-        window.currentStream.getTracks().forEach(track => track.stop());
-    }
+    if (window.currentStream) window.currentStream.getTracks().forEach(track => track.stop());
     document.getElementById('camera-overlay').classList.add('hidden');
 };
 
@@ -107,6 +83,7 @@ db.ref('/').on('value', (snapshot) => {
     if (data) {
         inventario = data.inventario || [];
         historial = data.historial || [];
+        notasObra = data.notasObra || {}; 
         renderizar(); 
     }
 });
@@ -141,7 +118,29 @@ window.cerrarSesion = function() {
     }
 };
 
-// --- ACCIONES ---
+// --- GESTIÓN DE NOTAS ---
+window.guardarNota = function(obra) {
+    const texto = document.getElementById(`nota-${obra}`).value;
+    notasObra[obra] = texto;
+    actualizarFirebase();
+    alert("Nota guardada en la nube.");
+};
+
+// --- RECUENTO RÁPIDO (MODIFICADO) ---
+window.confirmarRecuento = function(index) {
+    const nuevaCant = parseInt(document.getElementById(`recuento-input-${index}`).value);
+    const item = inventario[index];
+    const cantAnterior = item.ubicaciones["Almacén"];
+    if (!isNaN(nuevaCant) && nuevaCant >= 0) {
+        item.ubicaciones["Almacén"] = nuevaCant;
+        // Marcamos como revisado en esta sesión para cambiar el color del botón
+        revisadosSession[item.id] = true; 
+        anotarHistorial(item.nombre, `Recuento realizado: ${cantAnterior} -> ${nuevaCant} un.`);
+        actualizarFirebase();
+    }
+};
+
+// --- ACCIONES INVENTARIO ---
 document.getElementById('form-nuevo').addEventListener('submit', function(e) {
     e.preventDefault();
     const nombreInput = document.getElementById('nombre').value.trim();
@@ -205,7 +204,7 @@ window.eliminarFotoEdicion = function() {
     if(confirm("¿Quitar la foto?")) {
         fotoMarcadaParaBorrar = true;
         document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
-        document.getElementById('preview-editar').innerHTML = "<p style='color:red; font-size:0.8rem;'>Foto marcada para borrar.</p>";
+        document.getElementById('preview-editar').innerHTML = "<p style='color:red;'>Foto marcada para borrar.</p>";
     }
 };
 
@@ -273,7 +272,7 @@ window.eliminar = function(index) {
 };
 
 function actualizarFirebase() {
-    db.ref('/').set({ inventario: inventario, historial: historial });
+    db.ref('/').set({ inventario, historial, notasObra });
 }
 
 function anotarHistorial(nombre, accion) {
@@ -297,28 +296,28 @@ function showScreen(screenId) {
     document.getElementById('screen-' + screenId).classList.remove('hidden');
     const buscadorCont = document.getElementById('busqueda-container');
     if (buscadorCont) {
-        if (['inicio', 'salida', 'regreso'].includes(screenId)) buscadorCont.classList.remove('hidden');
+        if (['inicio', 'salida', 'regreso', 'recuento'].includes(screenId)) buscadorCont.classList.remove('hidden');
         else buscadorCont.classList.add('hidden');
     }
     if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
     renderizar();
 }
 
+// --- RENDERIZADO TOTAL ---
 function renderizar() {
     const lTotal = document.getElementById('lista-total');
     const lSalida = document.getElementById('lista-salida');
     const lRegreso = document.getElementById('lista-regreso');
     const lHistorial = document.getElementById('lista-historial');
     const lPorObra = document.getElementById('lista-por-obra');
+    const lRecuento = document.getElementById('lista-recuento');
     
-    const buscador = document.getElementById('buscador');
-    const filtroTexto = buscador ? buscador.value.toLowerCase() : '';
-    const buscadorHist = document.getElementById('buscador-historial');
-    const filtroHist = buscadorHist ? buscadorHist.value.toLowerCase() : '';
+    const filtroTexto = document.getElementById('buscador')?.value.toLowerCase() || '';
+    const filtroHist = document.getElementById('buscador-historial')?.value.toLowerCase() || '';
 
     if (!lTotal || document.getElementById('app-container').classList.contains('hidden')) return;
 
-    lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = ''; lPorObra.innerHTML = '';
+    lTotal.innerHTML = ''; lSalida.innerHTML = ''; lRegreso.innerHTML = ''; lHistorial.innerHTML = ''; lPorObra.innerHTML = ''; lRecuento.innerHTML = '';
 
     let obrasEncontradas = {};
 
@@ -338,28 +337,58 @@ function renderizar() {
             let cant = item.ubicaciones[loc];
             if (cant > 0 || loc === "Almacén") {
                 let clase = (loc === "Almacén") ? "badge-almacen" : "badge-obra";
-                let textoBadge = `<span class="${clase}">📍 ${loc}: ${cant} un.</span>`;
-                badgesHTML += textoBadge;
+                badgesHTML += `<span class="${clase}">📍 ${loc}: ${cant} un.</span>`;
                 if (cant > 0) {
                     if (!obrasEncontradas[loc]) obrasEncontradas[loc] = [];
                     obrasEncontradas[loc].push(`${item.nombre} (${cant} un.)`);
                 }
                 if (loc !== "Almacén" && cant > 0) {
-                    badgesRegresoHTML += `<div class="fila-regreso">${textoBadge}<button class="btn-mini-regreso" onclick="regresoRapido(${index}, '${loc}')">↖ Devolver</button></div>`;
+                    badgesRegresoHTML += `<div class="fila-regreso"><span class="${clase}">📍 ${loc}: ${cant} un.</span><button class="btn-mini-regreso" onclick="regresoRapido(${index}, '${loc}')">↖ Devolver</button></div>`;
                 } else {
-                    badgesRegresoHTML += textoBadge;
+                    badgesRegresoHTML += `<span class="${clase}">📍 ${loc}: ${cant} un.</span>`;
                 }
             }
         }
 
-        const cuerpoCard = `<div class="card-cuerpo">${fotoHTML}<div class="card-info"><span class="tag-categoria">${item.categoria || 'Manual'}</span><span class="item-nombre" style="${estiloNombre}">${item.nombre} ${avisoCritico}</span><div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>${badgesHTML}</div></div>`;
-        lTotal.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}<button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button></div>`;
-        lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})">${cuerpoCard}<button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button></div>`;
-        lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${fotoHTML}<div class="card-info"><span class="tag-categoria">${item.categoria || 'Manual'}</span><span class="item-nombre" style="${estiloNombre}">${item.nombre}</span><div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>${badgesRegresoHTML}</div></div></div>`; 
+        const baseCardInfo = `${fotoHTML}<div class="card-info"><span class="tag-categoria">${item.categoria || 'Manual'}</span><span class="item-nombre" style="${estiloNombre}">${item.nombre} ${avisoCritico}</span><div class="info-stock">Coste: ${item.costo}€ | Compra: ${formatearFechaVisual(item.fecha)}</div>`;
+        
+        lTotal.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${baseCardInfo}${badgesHTML}</div><button class="btn-borrar" onclick="eliminar(${index})">Eliminar</button></div>`;
+        lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${baseCardInfo}${badgesHTML}</div><button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button></div>`;
+        lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${baseCardInfo}${badgesRegresoHTML}</div></div>`; 
+        
+        // Vista de RECUENTO RÁPIDO (MODIFICADA CON BOTÓN DINÁMICO)
+        const revisado = revisadosSession[item.id];
+        const btnClase = revisado ? "btn-mini-confirm revisado" : "btn-mini-confirm pendiente";
+        const btnTexto = revisado ? "✅ OK" : "CONFIRMAR";
+
+        lRecuento.innerHTML += `
+            <div class="item-card recuento-card">
+                <div class="card-cuerpo">
+                    ${fotoHTML}
+                    <div class="card-info">
+                        <span class="item-nombre" style="font-size:1.1rem">${item.nombre}</span>
+                        <div class="fila-input-recuento">
+                            <input type="number" id="recuento-input-${index}" value="${cantAlmacen}" class="input-mini">
+                            <button onclick="confirmarRecuento(${index})" class="${btnClase}">${btnTexto}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
     });
 
     for (let obra in obrasEncontradas) {
-        lPorObra.innerHTML += `<div class="item-card" style="border-left: 6px solid #f1c40f"><span class="item-nombre">📍 Obra: ${obra}</span>Contenido: <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul></div>`;
+        if (obra === "Almacén") continue;
+        const notaActual = notasObra[obra] || "";
+        lPorObra.innerHTML += `
+            <div class="item-card site-card">
+                <span class="item-nombre">📍 Obra: ${obra}</span>
+                <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul>
+                <div class="seccion-notas">
+                    <label class="label-input">📝 Notas de Obra:</label>
+                    <textarea id="nota-${obra}" class="textarea-notas" placeholder="Añadir comentarios sobre la obra...">${notaActual}</textarea>
+                    <button onclick="guardarNota('${obra}')" class="btn-guardar-nota">💾 GUARDAR NOTA</button>
+                </div>
+            </div>`;
     }
 
     historial.forEach(h => {
@@ -386,7 +415,7 @@ function exportarExcel() {
 }
 
 window.borrarHistorial = function() {
-    if(confirm("¿Limpiar historial de la nube definitivamente?")) {
+    if(confirm("¿Limpiar historial definitivamente?")) {
         historial = [];
         actualizarFirebase();
     }
