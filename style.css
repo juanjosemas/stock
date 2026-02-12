@@ -79,10 +79,10 @@ h2 {
 
 .ico { 
   border-radius: 50%; /* Hace que la foto de Juanjo sea circular */
-  margin: 8px 8px 8px 80px; /* Margen derecho específico según tu diseño */
+  margin: 8px 8px 8px 50px; /* Margen derecho específico según tu diseño */
   animation: logo 3s ease-in-out; /* Aplica la animación de rotación al cargar */
   background-color: black; /* Fondo negro detrás de la imagen */
-  border: 2px solid red; /* Borde rojo circular característico */
+  border: 2px solid black; /* Borde negro circular característico */
   vertical-align: middle; /* Alinea la imagen a la misma altura que el texto */
 }
 
