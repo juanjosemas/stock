@@ -11,68 +11,15 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const auth = firebase.auth();
 
 let inventario = [];
 let historial = [];
 let notasObra = {}; 
-let revisadosSession = {}; 
+let revisadosSession = {}; // NUEVO: Para recordar qué hemos revisado en esta sesión de recuento
 let filtroCategoriaActual = 'Todas';
 let fotoMarcadaParaBorrar = false;
 let fotoCapturadaTemp = null; 
 let previewContainerActual = ""; 
-
-// --- SISTEMA DE SEGURIDAD (Login Real en Firebase) ---
-
-window.verificarAcceso = function() {
-    const email = document.getElementById('user').value.trim();
-    const pass = document.getElementById('pass').value;
-
-    // Google verifica las credenciales y nos da permiso
-    auth.signInWithEmailAndPassword(email, pass)
-        .then((userCredential) => {
-            // ÉXITO: Firebase nos permite ver los datos
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            iniciarEscuchador(); // Solo activamos los datos tras el login
-        })
-        .catch((error) => {
-            // ERROR: Datos falsos o usuario no creado en Firebase
-            const errorMsg = document.getElementById('login-error');
-            errorMsg.innerText = "Correo o contraseña incorrectos";
-            errorMsg.classList.remove('hidden');
-            setTimeout(() => errorMsg.classList.add('hidden'), 3000);
-        });
-};
-
-// COMPROBACIÓN DE SESIÓN AL CARGAR
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app-container').classList.remove('hidden');
-        iniciarEscuchador();
-    }
-});
-
-window.cerrarSesion = function() {
-    if (confirm("¿Cerrar sesión?")) {
-        auth.signOut().then(() => {
-            location.reload();
-        });
-    }
-};
-
-function iniciarEscuchador() {
-    db.ref('/').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            inventario = data.inventario || [];
-            historial = data.historial || [];
-            notasObra = data.notasObra || {}; 
-            renderizar(); 
-        }
-    });
-}
 
 // --- SISTEMA DE CÁMARA ---
 window.abrirCamara = async function(containerId) {
@@ -86,7 +33,7 @@ window.abrirCamara = async function(containerId) {
         window.currentStream = stream;
         video.onloadedmetadata = () => { video.play().catch(e => console.error(e)); };
     } catch (err) {
-        alert("Cámara no disponible.");
+        alert("Cámara no disponible. Revisa permisos.");
         cerrarCamara();
     }
 };
@@ -130,23 +77,65 @@ window.procesarFotoGaleria = function(input, containerId) {
     }
 };
 
+// --- FIREBASE SYNC ---
+db.ref('/').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        inventario = data.inventario || [];
+        historial = data.historial || [];
+        notasObra = data.notasObra || {}; 
+        renderizar(); 
+    }
+});
+
+// --- LOGIN ---
+window.onload = function() {
+    if (localStorage.getItem('almacen_juanjo_login') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+    }
+};
+
+window.verificarAcceso = function() {
+    const userVal = document.getElementById('user').value.trim();
+    const passVal = document.getElementById('pass').value;
+    if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
+        localStorage.setItem('almacen_juanjo_login', 'true');
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        renderizar();
+    } else {
+        const errorMsg = document.getElementById('login-error');
+        errorMsg.classList.remove('hidden');
+        setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+    }
+};
+
+window.cerrarSesion = function() {
+    if (confirm("¿Cerrar sesión?")) {
+        localStorage.removeItem('almacen_juanjo_login');
+        location.reload();
+    }
+};
+
 // --- GESTIÓN DE NOTAS ---
 window.guardarNota = function(obra) {
     const texto = document.getElementById(`nota-${obra}`).value;
     notasObra[obra] = texto;
     actualizarFirebase();
-    alert("Nota guardada.");
+    alert("Nota guardada en la nube.");
 };
 
-// --- RECUENTO RÁPIDO ---
+// --- RECUENTO RÁPIDO (MODIFICADO) ---
 window.confirmarRecuento = function(index) {
     const nuevaCant = parseInt(document.getElementById(`recuento-input-${index}`).value);
     const item = inventario[index];
     const cantAnterior = item.ubicaciones["Almacén"];
     if (!isNaN(nuevaCant) && nuevaCant >= 0) {
         item.ubicaciones["Almacén"] = nuevaCant;
+        // Marcamos como revisado en esta sesión para cambiar el color del botón
         revisadosSession[item.id] = true; 
-        anotarHistorial(item.nombre, `Recuento: ${cantAnterior} -> ${nuevaCant} un.`);
+        anotarHistorial(item.nombre, `Recuento realizado: ${cantAnterior} -> ${nuevaCant} un.`);
         actualizarFirebase();
     }
 };
@@ -169,7 +158,7 @@ document.getElementById('form-nuevo').addEventListener('submit', function(e) {
         itemExistente.fecha = fechaNueva;
         itemExistente.stockMinimo = stockMinVal;
         if (fotoCapturadaTemp) itemExistente.foto = fotoCapturadaTemp;
-        anotarHistorial(itemExistente.nombre, `Compra: +${cantNueva} un.`);
+        anotarHistorial(itemExistente.nombre, `Compra adicional: +${cantNueva} un.`);
     } else {
         const nuevo = {
             id: Date.now(),
@@ -212,10 +201,10 @@ window.abrirEditor = function(index) {
 };
 
 window.eliminarFotoEdicion = function() {
-    if(confirm("¿Quitar foto?")) {
+    if(confirm("¿Quitar la foto?")) {
         fotoMarcadaParaBorrar = true;
         document.getElementById('btn-borrar-foto-edit').classList.add('hidden');
-        document.getElementById('preview-editar').innerHTML = "<p style='color:red;'>Marcada para borrar.</p>";
+        document.getElementById('preview-editar').innerHTML = "<p style='color:red;'>Foto marcada para borrar.</p>";
     }
 };
 
@@ -314,6 +303,7 @@ function showScreen(screenId) {
     renderizar();
 }
 
+// --- RENDERIZADO TOTAL ---
 function renderizar() {
     const lTotal = document.getElementById('lista-total');
     const lSalida = document.getElementById('lista-salida');
@@ -366,6 +356,7 @@ function renderizar() {
         lSalida.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${baseCardInfo}${badgesHTML}</div><button class="btn-enviar-peque" onclick="salidaObra(${index})">↗ Enviar a Obra</button></div>`;
         lRegreso.innerHTML += `<div class="item-card" ondblclick="abrirEditor(${index})"><div class="card-cuerpo">${baseCardInfo}${badgesRegresoHTML}</div></div>`; 
         
+        // Vista de RECUENTO RÁPIDO (MODIFICADA CON BOTÓN DINÁMICO)
         const revisado = revisadosSession[item.id];
         const btnClase = revisado ? "btn-mini-confirm revisado" : "btn-mini-confirm pendiente";
         const btnTexto = revisado ? "✅ OK" : "CONFIRMAR";
@@ -393,9 +384,9 @@ function renderizar() {
                 <span class="item-nombre">📍 Obra: ${obra}</span>
                 <ul style="font-size:0.9rem">${obrasEncontradas[obra].map(h => `<li>${h}</li>`).join('')}</ul>
                 <div class="seccion-notas">
-                    <label class="label-input">📝 Notas:</label>
-                    <textarea id="nota-${obra}" class="textarea-notas">${notaActual}</textarea>
-                    <button onclick="guardarNota('${obra}')" class="btn-guardar-nota">💾 GUARDAR</button>
+                    <label class="label-input">📝 Notas de Obra:</label>
+                    <textarea id="nota-${obra}" class="textarea-notas" placeholder="Añadir comentarios sobre la obra...">${notaActual}</textarea>
+                    <button onclick="guardarNota('${obra}')" class="btn-guardar-nota">💾 GUARDAR NOTA</button>
                 </div>
             </div>`;
     }
@@ -419,12 +410,12 @@ function exportarExcel() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `Almacen_EcoStruct.csv`;
+    link.download = `Almacen_EcoStruct_${new Date().toLocaleDateString()}.csv`;
     link.click();
 }
 
 window.borrarHistorial = function() {
-    if(confirm("¿Borrar historial?")) {
+    if(confirm("¿Limpiar historial definitivamente?")) {
         historial = [];
         actualizarFirebase();
     }

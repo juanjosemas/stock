@@ -13,7 +13,7 @@
         <div class="card login-card">
             <div class="logo-login">🏗️ Almacén Eco Struct</div>
             <h2>Identifícate</h2>
-            <input type="text" id="user" placeholder="Correo (ej: admin@eco.com)">
+            <input type="text" id="user" placeholder="Usuario">
             <input type="password" id="pass" placeholder="Contraseña">
             <button onclick="verificarAcceso()" class="btn-save">Entrar</button>
             <p id="login-error" class="hidden error-text">Datos incorrectos</p>
@@ -77,7 +77,6 @@
             <section id="screen-recuento" class="view hidden"><h2>✅<i> Recuento de Almacén</i></h2><div id="lista-recuento"></div></section>
             <section id="screen-por-obra" class="view hidden"><h2>🏗️<i> Herramientas por Obra</i></h2><div id="lista-por-obra"></div></section>
 
-            <!-- Registro -->
             <section id="screen-nuevo" class="view hidden">
                 <h2>➕ Nueva Compra</h2>
                 <form id="form-nuevo" class="card">
@@ -92,7 +91,6 @@
                     <input type="number" id="cantidad" placeholder="Cantidad comprada" required>
                     <input type="number" id="costo" placeholder="Costo total (€)" step="0.01">
                     <input type="number" id="stock-minimo" placeholder="Avisar si queda menos de...">
-                    
                     <label class="label-input">Imagen de la Herramienta:</label>
                     <div class="grupo-botones-foto">
                         <button type="button" onclick="abrirCamara('preview-nueva')" class="btn-abrir-cam">📸 CÁMARA</button>
@@ -100,14 +98,12 @@
                     </div>
                     <input type="file" id="input-galeria-nueva" accept="image/*" class="hidden" onchange="procesarFotoGaleria(this, 'preview-nueva')">
                     <div id="preview-nueva" class="container-preview-form"></div>
-                    
                     <label class="label-input">Fecha de compra:</label>
                     <input type="date" id="fecha">
                     <button type="submit" class="btn-save">Registrar Entrada</button>
                 </form>
             </section>
 
-            <!-- Editor -->
             <section id="screen-editar" class="view hidden">
                 <h2>✏️ Editar Herramienta</h2>
                 <form id="form-editar" class="card">
@@ -125,7 +121,6 @@
                     <input type="number" id="edit-costo" step="0.01">
                     <label class="label-input">Stock Crítico (aviso):</label>
                     <input type="number" id="edit-stock-minimo">
-                    
                     <label class="label-input">Actualizar Imagen:</label>
                     <div class="grupo-botones-foto">
                         <button type="button" onclick="abrirCamara('preview-editar')" class="btn-abrir-cam">📸 CÁMARA</button>
@@ -134,7 +129,6 @@
                     <input type="file" id="input-galeria-editar" accept="image/*" class="hidden" onchange="procesarFotoGaleria(this, 'preview-editar')">
                     <div id="preview-editar" class="container-preview-form"></div>
                     <button type="button" id="btn-borrar-foto-edit" onclick="eliminarFotoEdicion()" class="btn-borrar-foto-edit hidden">🗑️ Eliminar Foto Actual</button>
-                    
                     <button type="submit" class="btn-save" style="margin-top: 15px;">Guardar Cambios</button>
                     <button type="button" onclick="showScreen('inicio')" class="btn-borrar-hist" style="background:#6c757d; margin-top:10px">Cancelar</button>
                 </form>
@@ -154,11 +148,9 @@
         </main>
     </div>
 
-    <!-- SCRIPTS DE FIREBASE (Añadido Firebase Auth) -->
+    <!-- SCRIPTS DE FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
