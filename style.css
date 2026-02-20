@@ -386,13 +386,15 @@ input {
 }
 
 .btn-mini-confirm {
-  flex-grow: 1; /* El botón ocupa el resto del espacio de la fila */
+  flex-grow: 0; /* El botón ocupa el resto del espacio de la fila */
   border: none; /* Sin bordes */
   padding: 5px 15px; /* Relleno lateral */
   border-radius: 4px; /* Redondeo leve */
   font-weight: bold; /* Resaltado */
   cursor: pointer; /* Icono de mano */
   transition: 0.3s; /* Animación de color suave al cambiar de estado */
+  width: auto; /* El ancho del botón se ajusta automáticamente a su texto interior */
+  min-width: 100px; /* Establece un ancho mínimo de 100px para mantener consistencia visual */
 }
 
 .btn-mini-confirm.pendiente {
